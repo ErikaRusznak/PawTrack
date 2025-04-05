@@ -1,57 +1,75 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
-
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { AntDesign, Feather, Octicons, Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
 import { useClientOnlyValue } from '@/hooks/useClientOnlyValue';
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import { theme } from '@/components/Themed';
+import HeaderText from '@/components/atoms/HeaderText';
+import HeaderIcons from '@/components/atoms/HeaderIcons';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+  const headerShown = useClientOnlyValue(false, true)
+  console.log("g", theme.beige)
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: headerShown,
+        headerStyle: {
+          backgroundColor: theme.beige, 
+        },
+        tabBarActiveTintColor: theme.orange,
+        tabBarInactiveTintColor: theme.brown,
+        tabBarStyle: {
+          backgroundColor: theme.beige,
+        }
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color } : any) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: 'Home',
+          headerTitleAlign: 'left',
+          headerTitle: () => <HeaderText text={'Paw Track'}/>,
+          headerRight: () => <HeaderIcons />,
+          tabBarIcon: ({ color } : any) => <AntDesign name="home" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="messages"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }: any) => <TabBarIcon name="code" color={color} />,
+          title: 'Messages',
+          headerTitleAlign: 'left',
+          headerTitle: () => <HeaderText text={'Messages'}/>,
+          headerRight: () => <HeaderIcons />,
+          tabBarIcon: ({ color }: any) => <AntDesign name="message1" size={28} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="lostAndFound"
+        options={{
+          title: 'Forum',
+          headerTitleAlign: 'left',
+          headerTitle: () => <HeaderText text={'Lost&Found'}/>,
+          headerRight: () => <HeaderIcons />,
+          tabBarIcon: ({ color }: any) => <Octicons name="apps" size={28} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="pets"
+        options={{
+          title: 'Pets',
+          headerTitleAlign: 'left',
+          headerTitle: () => <HeaderText text={'Pets'}/>,
+          headerRight: () => <HeaderIcons />,
+          tabBarIcon: ({ color }: any) =><Ionicons name="paw-outline" size={28} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          headerTitleAlign: 'left',
+          headerTitle: () => <HeaderText text={'Profile'}/>,
+          headerRight: () => <HeaderIcons />,
+          tabBarIcon: ({ color }: any) => <Feather name="user" size={28} color={color} />,
         }}
       />
     </Tabs>
