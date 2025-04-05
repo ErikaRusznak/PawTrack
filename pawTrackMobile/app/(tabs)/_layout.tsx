@@ -8,7 +8,7 @@ import HeaderIcons from '@/components/atoms/HeaderIcons';
 
 export default function TabLayout() {
   const headerShown = useClientOnlyValue(false, true)
-  console.log("g", theme.beige)
+
   return (
     <Tabs
       screenOptions={{
@@ -21,11 +21,13 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: theme.beige,
         }
+        // backBehavior="history"
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
+          animation: 'fade',
           headerTitleAlign: 'left',
           headerTitle: () => <HeaderText text={'Paw Track'}/>,
           headerRight: () => <HeaderIcons />,
@@ -33,9 +35,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="messages"
+        name="messages/index"
         options={{
           title: 'Messages',
+          animation: 'fade',
           headerTitleAlign: 'left',
           headerTitle: () => <HeaderText text={'Messages'}/>,
           headerRight: () => <HeaderIcons />,
@@ -43,9 +46,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="lostAndFound"
+        name="lostAndFound/index"
         options={{
           title: 'Forum',
+          animation: 'fade',
           headerTitleAlign: 'left',
           headerTitle: () => <HeaderText text={'Lost&Found'}/>,
           headerRight: () => <HeaderIcons />,
@@ -53,9 +57,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="pets"
+        name="pets/index"
         options={{
           title: 'Pets',
+          animation: 'fade',
           headerTitleAlign: 'left',
           headerTitle: () => <HeaderText text={'Pets'}/>,
           headerRight: () => <HeaderIcons />,
@@ -63,13 +68,21 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="profile/index"
         options={{
           title: 'Profile',
+          animation: 'fade',
           headerTitleAlign: 'left',
           headerTitle: () => <HeaderText text={'Profile'}/>,
           headerRight: () => <HeaderIcons />,
           tabBarIcon: ({ color }: any) => <Feather name="user" size={28} color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="addTask/index"
+        options={{
+          href: null
         }}
       />
     </Tabs>

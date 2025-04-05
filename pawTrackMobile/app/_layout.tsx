@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { StatusBar } from 'react-native';
+import HeaderIcons from '@/components/atoms/HeaderIcons';
+import HeaderText from '@/components/atoms/HeaderText';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,7 +54,7 @@ function RootLayoutNav() {
     <ThemeProvider value={DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="zz" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>
   );

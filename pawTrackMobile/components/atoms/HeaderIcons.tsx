@@ -14,7 +14,7 @@ const HeaderIcons = () => {
                 )}
             </Pressable>
         </Link>
-        <Link href="/modal" asChild>
+        <Link href="../addTask" asChild>
             <Pressable>
                 {({ pressed }) => (
                     <FontAwesome name="info-circle" size={25} color={theme.text} style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }} />
