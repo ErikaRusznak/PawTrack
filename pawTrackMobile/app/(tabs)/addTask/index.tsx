@@ -1,10 +1,22 @@
+import MainView from "@/components/templates/MainView";
 import { View, Text } from "@/components/Themed";
 import React from 'react';
+import { StyleSheet } from 'react-native';
 
-export default function AddTaskScreen() {
+const AddTaskScreen = () => {
   return (
-    <View>
-      <Text>This is the Added Page!</Text>
-    </View>
+    <MainView>
+      <Text style={styles.title}>Home Screen</Text>
+    </MainView>
   );
 };
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+});
+
+
+export default AddTaskScreen;

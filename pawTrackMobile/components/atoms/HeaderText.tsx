@@ -3,7 +3,8 @@ import { View, Text as HomeText, theme } from '@/components/Themed';
 
 type HeaderTextProps = {
     text: string;
-}
+};
+
 const HeaderText = ({text}: HeaderTextProps) => {
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: theme.beige }}>

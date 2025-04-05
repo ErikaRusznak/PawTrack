@@ -13,7 +13,8 @@ const MainView = ({children}) => {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        marginHorizontal: 10
+        marginHorizontal: 15,
+        marginVertical: 10,
     }
 })
 

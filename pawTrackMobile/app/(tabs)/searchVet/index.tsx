@@ -2,19 +2,19 @@ import { StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import MainView from '@/components/templates/MainView';
 
-const MessagesScreen = () => {
+const SearchVetScreen = () => {
   return (
     <MainView>
-      <Text style={styles.title}>Messages Screen</Text>
+      <Text style={styles.title}>Home Screen</Text>
     </MainView>
   );
 };
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
   },
 });
 
-export default MessagesScreen;
+export default SearchVetScreen;

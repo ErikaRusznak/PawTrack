@@ -79,12 +79,9 @@ export default function TabLayout() {
         }}
       />
 
-      <Tabs.Screen
-        name="addTask/index"
-        options={{
-          href: null
-        }}
-      />
+      <Tabs.Screen name="addTask/index" options={{ href: null }} />
+      <Tabs.Screen name="searchVet/index" options={{href: null}} />
+      
     </Tabs>
   );
 }
