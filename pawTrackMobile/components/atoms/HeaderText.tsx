@@ -8,7 +8,7 @@ type HeaderTextProps = {
 const HeaderText = ({text}: HeaderTextProps) => {
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: theme.beige }}>
-            <HomeText style={{ fontSize: 18, fontWeight: 'bold', color: theme.brown}}>{text}</HomeText>
+            <HomeText style={{ fontSize: 22, fontWeight: 'bold', color: theme.brown}}>{text}</HomeText>
             <FontAwesome name="paw" size={20} color={theme.orange} />
         </View>
     );
