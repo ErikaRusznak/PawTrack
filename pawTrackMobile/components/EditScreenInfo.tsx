@@ -1,42 +1,37 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { TextBold, TextLight, TextMedium, TextRegular, TextSemiBold } from './StyledText';
+import { View } from './Themed';
 
-import { ExternalLink } from './ExternalLink';
-import { MonoText } from './StyledText';
-import { Text, View } from './Themed';
-
-import Colors from '@/constants/Colors';
 import MainView from './templates/MainView';
 
-export default function EditScreenInfo({ path }: { path: string }) {
+export default function EditScreenInfo({ path='' }: { path?: string }) {
   return (
     <MainView>
       <View style={styles.getStartedContainer}>
-        <Text
-          style={styles.getStartedText}>
-          Open up the code for this screen:
-        </Text>
+        <TextBold>
+          This is a bold text
+        </TextBold>
 
-        <View
-          style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-          <MonoText>{path}</MonoText>
-        </View>
+        <TextLight>
+          This is a light text
+        </TextLight>
+        
+        <TextMedium>
+          This is a light text
+        </TextMedium>
 
-        <Text
-          style={styles.getStartedText}>
-          Change any of the teasdasdasdsadasxt, save the file, and your app will automatically update.
-        </Text>
+        <TextRegular>
+          This is a light text
+        </TextRegular>
+
+        <TextSemiBold>
+          This is a light text
+        </TextSemiBold>
+
       </View>
 
-      <View style={styles.helpContainer}>
-        <ExternalLink
-          style={styles.helpLink}
-          href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">
-          <Text style={styles.helpLinkText} lightColor={Colors.light.tint}>
-            Tap here if your app doesn't automatically update after making changes
-          </Text>
-        </ExternalLink>
-      </View>
+      
     </MainView>
   );
 }
@@ -65,6 +60,7 @@ const styles = StyleSheet.create({
   },
   helpLink: {
     paddingVertical: 15,
+    fontWeight: 'bold'
   },
   helpLinkText: {
     textAlign: 'center',

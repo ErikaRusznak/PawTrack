@@ -1,12 +1,12 @@
 import { View } from "../Themed";
-import { StyleSheet } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 
 const MainView = ({children}) => {
 
     return (
-        <View style={styles.main}>
+        <SafeAreaView style={styles.main}>
             {children}
-        </View>
+        </SafeAreaView>
     );
 };
 

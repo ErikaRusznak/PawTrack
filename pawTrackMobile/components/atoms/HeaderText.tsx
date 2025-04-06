@@ -1,5 +1,5 @@
 import { FontAwesome } from "@expo/vector-icons";
-import { View, Text as HomeText, theme } from '@/components/Themed';
+import { View, Text as TitleText, theme } from '@/components/Themed';
 
 type HeaderTextProps = {
     text: string;
@@ -8,7 +8,7 @@ type HeaderTextProps = {
 const HeaderText = ({text}: HeaderTextProps) => {
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: theme.beige }}>
-            <HomeText style={{ fontSize: 22, fontWeight: 'bold', color: theme.brown}}>{text}</HomeText>
+            <TitleText style={{ fontSize: 22, fontWeight: 'bold', color: theme.brown}}>{text}</TitleText>
             <FontAwesome name="paw" size={20} color={theme.orange} />
         </View>
     );
