@@ -6,6 +6,7 @@ const ProfileScreen = () => {
   return (
     <MainView>
       <Text style={styles.title}>Home Screen</Text>
+      LOGOUT
     </MainView>
   );
 };

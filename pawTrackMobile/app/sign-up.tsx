@@ -1,14 +1,17 @@
+
+
 import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import MainView from '@/components/templates/MainView';
-import EditScreenInfo from '@/components/EditScreenInfo';
+import { useSession } from '@/context';
 
-const HomeScreen =()  => {
+const SignUpScreen =()  => {
+  const { signUp } = useSession();
+  
   return (
     <MainView>
-      <Text style={styles.title}>Home Screen</Text>
-      <EditScreenInfo />
+      <Text style={styles.title}>Sign up Screen</Text>
     </MainView>
   );
 };
@@ -20,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default SignUpScreen;
