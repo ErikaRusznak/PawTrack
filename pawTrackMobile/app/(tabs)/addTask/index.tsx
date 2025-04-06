@@ -1,9 +1,9 @@
+import MainView from "@/components/templates/MainView";
+import { View, Text } from "@/components/Themed";
+import React from 'react';
 import { StyleSheet } from 'react-native';
 
-import { Text, View } from '@/components/Themed';
-import MainView from '@/components/templates/MainView';
-
-const HomeScreen =()  => {
+const AddTaskScreen = () => {
   return (
     <MainView>
       <Text style={styles.title}>Home Screen</Text>
@@ -13,9 +13,10 @@ const HomeScreen =()  => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
   },
 });
 
-export default HomeScreen;
+
+export default AddTaskScreen;

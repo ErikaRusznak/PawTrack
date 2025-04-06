@@ -1,9 +1,8 @@
 import { StyleSheet } from 'react-native';
-
 import { Text, View } from '@/components/Themed';
 import MainView from '@/components/templates/MainView';
 
-const HomeScreen =()  => {
+const LostAndFoundScreen = () => {
   return (
     <MainView>
       <Text style={styles.title}>Home Screen</Text>
@@ -18,4 +17,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default LostAndFoundScreen;
