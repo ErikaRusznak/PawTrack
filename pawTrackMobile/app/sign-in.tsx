@@ -1,6 +1,6 @@
 import { StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { theme, View } from '@/components/Themed';
-import { useSession } from '@/context';
+import { useSession } from '@/context/AuthContext';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { router } from 'expo-router';
@@ -8,14 +8,31 @@ import { TextMedium, TextRegular } from '@/components/StyledText';
 import TitleAuthScreen from '@/components/atoms/authentication/TitleAuthScreen';
 import DefaultFormField from '@/components/moleculas/form/DefaultFormField';
 
-const SignInScreen =()  => {
+type LoginData = {
+  email: string;
+  password: string;
+}
+
+const SignInScreen = () => {
 
   const { signIn } = useSession();
   const { control, handleSubmit, formState: { errors } } = useForm();
-  const [submittedData, setSubmittedData] = useState(null);
   
-  const onSubmit = (data) => {
-    console.log('Submitted Data:', data);
+  const handleLogin = async (data: LoginData) => {
+    try {
+      return await signIn(data.email, data.password);
+    } catch (err) {
+      console.log("[handleLogin] ==>", err);
+      return null;
+    }
+  }
+  const onSubmit = async (data) => {
+    if(data) {
+      const response = await handleLogin(data);
+      if(response) {
+        router.replace("./(tabs)")
+      }
+    }
   };
 
   return (
@@ -47,7 +64,7 @@ const SignInScreen =()  => {
 
             <TextRegular style={styles.bottomText}>
                 Don’t have an account?{' '}
-                <TextMedium style={styles.link} onPress={() => router.push('/sign-up')}>
+                <TextMedium style={styles.link} onPress={() => router.replace('/sign-up')}>
                 Sign up here
                 </TextMedium>
             </TextRegular>

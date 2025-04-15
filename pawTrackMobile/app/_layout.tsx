@@ -5,7 +5,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { SessionProvider } from '@/context';
+import { SessionProvider } from '@/context/AuthContext';
 
 export {
   ErrorBoundary,
@@ -17,7 +17,7 @@ export const unstable_settings = {
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+const RootLayout = () => {
   const [loaded, error] = useFonts({
     'Montserrat-Regular': require('../assets/fonts/Montserrat-Regular.ttf'),
     'Montserrat-Bold': require('../assets/fonts/Montserrat-Bold.ttf'),
@@ -40,7 +40,7 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-function RootLayoutNav() {
+const RootLayoutNav = () => {
 
   return (
     <SessionProvider>
@@ -55,3 +55,5 @@ function RootLayoutNav() {
     </SessionProvider>
   );
 }
+
+export default RootLayout;

@@ -12,8 +12,8 @@ export default {
     orange: "#d98324",
     beige: "#efdcab",
     yellow: "#f2f6d0",
-    white: "#fff"
-    // gray: "#f5f5f5",
+    white: "#fff",
+    grey: "#f5f5f5",
   },
   dark: {
     text: '#000',
@@ -25,6 +25,7 @@ export default {
     orange: "#d98324",
     beige: "#efdcab",
     yellow: "#f2f6d0",
-    white: "#fff"
+    white: "#fff",
+    grey: "#f5f5f5",
   },
 };

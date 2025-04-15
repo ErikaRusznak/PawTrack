@@ -7,6 +7,7 @@ import {
     UserCredential
   } from 'firebase/auth';
 import { auth } from './firebaseConfig';
+import { addUserProfile } from '@/src/User';
 
 export interface FirebaseUserResponse {
     user: User;
@@ -26,10 +27,10 @@ export const getCurrentUser = async () => {
     }
 };
   
-export async function login(
+export const login = async (
     email: string, 
     password: string
-  ): Promise<FirebaseUserResponse | undefined> {
+  ): Promise<FirebaseUserResponse | undefined> => {
     try {
       const userCredential: UserCredential = await signInWithEmailAndPassword(
         auth, 
@@ -43,7 +44,7 @@ export async function login(
     }
 }
   
-export async function logout(): Promise<void> {
+export const logout = async(): Promise<void> => {
     try {
       await signOut(auth);
     } catch (e) {
@@ -52,17 +53,25 @@ export async function logout(): Promise<void> {
     }
 }
   
-export async function register(
-    email: string,
-    password: string,
-    name?: string
-  ): Promise<FirebaseUserResponse | undefined> {
+export const register = async(
+  firstName: string,
+  lastName: string,
+  age: number,
+  county: string,
+  email: string, 
+  password: string, 
+  picture?: string
+  ): Promise<FirebaseUserResponse | undefined> => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      if (name) {
-        await updateProfile(userCredential.user, { displayName: name });
+      if (picture) {
+        await updateProfile(userCredential.user, { photoURL: picture });
       }
+
+      addUserProfile(userCredential.user.uid, firstName, lastName, age, county, email, picture);
+  
       return { user: userCredential.user };
+      
     } catch (e) {
       console.error("[error registering] ==>", e);
       throw e;
