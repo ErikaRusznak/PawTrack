@@ -1,28 +1,63 @@
-
-
-import {SafeAreaView, StyleSheet, TouchableOpacity} from 'react-native';
-
+import {SafeAreaView, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import { theme, View} from '@/components/Themed';
-import { useSession } from '@/context';
+import { useSession } from '@/context/AuthContext';
 import {useForm} from "react-hook-form";
-import {useState} from "react";
 import TitleAuthScreen from "@/components/atoms/authentication/TitleAuthScreen";
 import DefaultFormField from "@/components/moleculas/form/DefaultFormField";
 import {TextMedium, TextRegular} from "@/components/StyledText";
 import {router} from "expo-router";
 import ImageUploader from "@/components/moleculas/form/ImageUploader";
+import { useState } from 'react';
+import { storage } from '@/firebase/firebaseConfig';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import uuid from 'react-native-uuid';
+
+type RegisterData = {
+  firstName: string;
+  lastName: string;
+  age: number;
+  county: string;
+  email: string;
+  password: string;
+  picture?: string;
+};
 
 const SignUpScreen =()  => {
   const { signUp } = useSession();
   const { control, handleSubmit, formState: { errors } } = useForm();
-  const [submittedData, setSubmittedData] = useState(null);
+  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
 
-  const onSubmit = (data) => {
-    console.log('Submitted Data:', data);
+  const handleRegister = async (data: RegisterData) => {
+    try {
+      let pictureUrl;
+
+      if (selectedImageUri) {
+        const response = await fetch(selectedImageUri);
+        const blob = await response.blob();
+        const fileRef = ref(storage, `profilePictures/${uuid.v4()}.jpg`);
+        await uploadBytes(fileRef, blob);
+        pictureUrl = await getDownloadURL(fileRef);
+      }
+      
+      return await signUp(data.firstName, data.lastName, Number(data.age), data.county, data.email, data.password, pictureUrl ?? null);
+    } catch (err) {
+      console.log("[handleRegister] ==>", err);
+      return null;
+    }
+  }
+
+  const onSubmit = async (data) => {
+    if(data) {
+      const response = await handleRegister(data);
+      if(response) {
+        router.replace("/sign-in");
+      }
+    }
   };
 
   return (
       <SafeAreaView style={styles.container}>
+        <ScrollView>
         <TitleAuthScreen />
         <View style={styles.formContainer}>
           <View style={styles.row}>
@@ -34,7 +69,7 @@ const SignUpScreen =()  => {
                   controllerName='firstName'
                   errorText='First name is required'
                   placeholderText='First Name...'
-                  style={{width: 150, color: theme.beige}}
+                  style={{width: 150}}
               />
             </View>
             <View style={styles.customInput}>
@@ -95,7 +130,7 @@ const SignUpScreen =()  => {
               secureTextEntry={true}
           />
 
-          <ImageUploader/>
+          <ImageUploader onImageSelected={(uri) => setSelectedImageUri(uri)} />
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
             <TextMedium style={styles.buttonText}>Register</TextMedium>
@@ -103,18 +138,25 @@ const SignUpScreen =()  => {
 
           <TextRegular style={styles.bottomText}>
             Already have an account?{' '}
-            <TextMedium style={styles.link} onPress={() => router.push('/sign-in')}>
-              Login
+            <TextMedium style={styles.link} onPress={() => router.replace('/sign-in')}>
+              Sign in here
             </TextMedium>
           </TextRegular>
         </View>
+        </ScrollView>
       </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  label: {
+    fontSize: 14,
+    marginBottom: 4,
+    color: theme.brown,
+  },
   row: {
     flexDirection: 'row',
+    gap: 2,
     justifyContent: 'space-between',
     backgroundColor: theme.beige,
   },

@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     // Android shadow
     elevation: 5,
+    color: theme.brown
   },
   error: {
     color: 'red',

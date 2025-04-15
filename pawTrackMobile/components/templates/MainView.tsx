@@ -1,11 +1,12 @@
-import { View } from "../Themed";
-import { StyleSheet, SafeAreaView } from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 
 const MainView = ({children}) => {
 
     return (
         <SafeAreaView style={styles.main}>
-            {children}
+            <ScrollView>
+              {children}
+            </ScrollView>
         </SafeAreaView>
     );
 };
