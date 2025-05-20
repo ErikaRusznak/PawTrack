@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import { Pressable } from "react-native";
 import { theme } from "../Themed";
 
@@ -7,15 +7,14 @@ type BackIconProps = {
     backPage?: string;
 }
 const BackIcon = ({ backPage = '' }: BackIconProps) => {
+    const router = useRouter();
     return (
         <>
-            <Link href={`../${backPage}`} asChild>
-                <Pressable>
-                    {({ pressed }) => (
-                        <Ionicons name="chevron-back" size={25} color={theme.brown} style={{ marginLeft: 8, opacity: pressed ? 0.5 : 1 }} />
-                    )}
-                </Pressable>
-            </Link>
+            <Pressable>
+                {({ pressed }) => (
+                    <Ionicons name="chevron-back" onPress={() => router.replace(backPage as RelativePathString)} size={25} color={theme.brown} style={{ marginLeft: 8, opacity: pressed ? 0.5 : 1 }} />
+                )}
+            </Pressable>
         </>
     );
 };

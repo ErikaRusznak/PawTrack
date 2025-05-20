@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { SessionProvider } from '@/context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 export {
   ErrorBoundary,
@@ -51,6 +52,7 @@ const RootLayoutNav = () => {
           <Stack.Screen name="sign-in" options={{ headerShown: false }} />
           <Stack.Screen name="sign-up" options={{ headerShown: false }} />
         </Stack>
+        <Toast />
       </ThemeProvider>
     </SessionProvider>
   );

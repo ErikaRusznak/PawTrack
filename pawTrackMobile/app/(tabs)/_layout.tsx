@@ -12,12 +12,11 @@ import { Text as LoadingText } from '@/components/Themed';
 const TabLayout = () => {
   const headerShown = useClientOnlyValue(false, true)
   const { user, isLoading } = useSession();
-  if(isLoading) {
+  if (isLoading) {
     return <LoadingText>Loading...</LoadingText>
   };
 
-  if(!user)
-  {
+  if (!user) {
     return <Redirect href="/sign-in" />
   };
 
@@ -26,7 +25,7 @@ const TabLayout = () => {
       screenOptions={{
         headerShown: headerShown,
         headerStyle: {
-          backgroundColor: theme.beige, 
+          backgroundColor: theme.beige,
         },
         tabBarActiveTintColor: theme.orange,
         tabBarInactiveTintColor: theme.brown,
@@ -40,9 +39,9 @@ const TabLayout = () => {
           title: 'Home',
           animation: 'fade',
           headerTitleAlign: 'left',
-          headerTitle: () => <HeaderText text={'Paw Track'}/>,
+          headerTitle: () => <HeaderText text={'Paw Track'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
-          tabBarIcon: ({ color } : any) => <AntDesign name='home' size={28} color={color} />,
+          tabBarIcon: ({ color }: any) => <AntDesign name='home' size={28} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -51,7 +50,7 @@ const TabLayout = () => {
           title: 'Messages',
           animation: 'fade',
           headerTitleAlign: 'left',
-          headerTitle: () => <HeaderText text={'Messages'}/>,
+          headerTitle: () => <HeaderText text={'Messages'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
           tabBarIcon: ({ color }: any) => <AntDesign name='message1' size={28} color={color} />,
         }}
@@ -62,7 +61,7 @@ const TabLayout = () => {
           title: 'Forum',
           animation: 'fade',
           headerTitleAlign: 'left',
-          headerTitle: () => <HeaderText text={'Lost&Found'}/>,
+          headerTitle: () => <HeaderText text={'Lost&Found'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
           tabBarIcon: ({ color }: any) => <Octicons name='apps' size={28} color={color} />,
         }}
@@ -73,9 +72,9 @@ const TabLayout = () => {
           title: 'Pets',
           animation: 'fade',
           headerTitleAlign: 'left',
-          headerTitle: () => <HeaderText text={'Pets'}/>,
+          headerTitle: () => <HeaderText text={'Pets'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
-          tabBarIcon: ({ color }: any) =><Ionicons name='paw-outline' size={28} color={color} />,
+          tabBarIcon: ({ color }: any) => <Ionicons name='paw-outline' size={28} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -84,12 +83,12 @@ const TabLayout = () => {
           title: 'Profile',
           animation: 'fade',
           headerTitleAlign: 'left',
-          headerTitle: () => <HeaderText text={'Profile'}/>,
+          headerTitle: () => <HeaderText text={'Profile'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
           tabBarIcon: ({ color }: any) => <Feather name='user' size={28} color={color} />,
         }}
       />
-    
+
       <Tabs.Screen
         name='addTask/index'
         options={{
@@ -97,7 +96,7 @@ const TabLayout = () => {
           animation: 'fade',
           headerTitleAlign: 'left',
           headerLeft: () => <BackIcon />,
-          headerTitle: () => <HeaderText text={'Add Task'}/>,
+          headerTitle: () => <HeaderText text={'Add Task'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={true} />,
         }}
       />
@@ -108,8 +107,30 @@ const TabLayout = () => {
           animation: 'fade',
           headerTitleAlign: 'left',
           headerLeft: () => <BackIcon />,
-          headerTitle: () => <HeaderText text={'Search vet offices'}/>,
-          headerRight: () => <HeaderIcons searchSelected={true} addSelected={false} />,
+          headerTitle: () => <HeaderText text={'Search vet offices'} />,
+          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
+        }}
+      />
+      <Tabs.Screen
+        name="pets/add/index"
+        options={{
+          href: null,
+          animation: 'fade',
+          headerTitleAlign: 'left',
+          headerLeft: () => <BackIcon backPage='/(tabs)/pets'/>,
+          headerTitle: () => <HeaderText text={'Add Pet'} />,
+          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
+        }}
+      />
+      <Tabs.Screen
+        name="pets/edit/[id]"
+        options={{
+          href: null,
+          animation: 'fade',
+          headerTitleAlign: 'left',
+          headerLeft: () => <BackIcon backPage='/(tabs)/pets'/>,
+          headerTitle: () => <HeaderText text={'Edit Pet'} />,
+          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
       />
     </Tabs>

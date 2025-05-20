@@ -18,15 +18,15 @@ export default function EditScreenInfo({ path='' }: { path?: string }) {
         </TextLight>
         
         <TextMedium>
-          This is a light text
+          This is a medium text
         </TextMedium>
 
         <TextRegular>
-          This is a light text
+          This is a regular text
         </TextRegular>
 
         <TextSemiBold>
-          This is a light text
+          This is a semi bold text
         </TextSemiBold>
 
       </View>

@@ -1,45 +1,47 @@
 import { TextMedium, TextRegular } from "@/components/StyledText";
 import { theme } from "@/components/Themed";
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
-import {TextInput, TextStyle} from "react-native";
+import { TextInput, TextStyle } from "react-native";
 import { StyleSheet } from 'react-native';
 
 type DefaultFormFieldType = {
-    control: Control<FieldValues, any, FieldValues>;
-    errors: FieldErrors<FieldValues>;
-    keyboardType?: 'default' | 'email-address' | 'numeric';
-    label: string;
-    controllerName: string;
-    errorText: string;
-    placeholderText: string;
-    secureTextEntry?: boolean;
-    style?: TextStyle;
+  control: Control<FieldValues, any, FieldValues>;
+  errors: FieldErrors<FieldValues>;
+  keyboardType?: 'default' | 'email-address' | 'numeric';
+  label: string;
+  controllerName: string;
+  errorText: string;
+  placeholderText: string;
+  secureTextEntry?: boolean;
+  style?: TextStyle;
 }
-const DefaultFormField = ({ control, errors, keyboardType = 'default', label, controllerName, errorText, placeholderText, secureTextEntry=false, style }: DefaultFormFieldType) => {
-    return (
-        <>
-            <TextMedium style={styles.label}>{label}</TextMedium>
-            <Controller
-                control={control}
-                name={controllerName}
-                rules={{ required: errorText }}
-                render={({ field: { onChange, value } }) => (
-                <TextInput
-                    style={[styles.input, style]}
-                    placeholderTextColor='#999'
-                    placeholder={placeholderText}
-                    value={value}
-                    onChangeText={onChange}
-                    keyboardType={keyboardType}
-                    autoCapitalize='none'
-                    secureTextEntry={secureTextEntry}
-                />)}
-            />
-            {errors[controllerName] && (
-                <TextRegular style={styles.error}>{`${errors[controllerName].message}`}</TextRegular>
-            )}
-        </>
-    );
+const DefaultFormField = ({ control, errors, keyboardType = 'default', label, controllerName, errorText, placeholderText, secureTextEntry = false, style }: DefaultFormFieldType) => {
+  return (
+    <>
+      <TextMedium style={styles.label}>{label}</TextMedium>
+      <Controller
+        control={control}
+        name={controllerName}
+        rules={{ required: errorText }}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            style={[styles.input, style, { fontFamily: 'Montserrat-Regular' }]}
+            placeholderTextColor='#999'
+            placeholder={placeholderText}
+            value={value}
+            onChangeText={onChange}
+            keyboardType={keyboardType}
+            autoCapitalize='none'
+            secureTextEntry={secureTextEntry}
+            multiline={true}
+            numberOfLines={4}
+          />)}
+      />
+      {errors[controllerName] && (
+        <TextRegular style={styles.error}>{`${errors[controllerName].message}`}</TextRegular>
+      )}
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -63,7 +65,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     // Android shadow
     elevation: 5,
-    color: theme.brown
+    color: theme.brown,
   },
   error: {
     color: 'red',

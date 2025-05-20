@@ -4,7 +4,7 @@ const MainView = ({children}) => {
 
     return (
         <SafeAreaView style={styles.main}>
-            <ScrollView>
+            <ScrollView nestedScrollEnabled={true}>
               {children}
             </ScrollView>
         </SafeAreaView>
@@ -14,7 +14,7 @@ const MainView = ({children}) => {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        marginHorizontal: 15,
+        marginHorizontal: 20,
         marginVertical: 10,
     }
 })
