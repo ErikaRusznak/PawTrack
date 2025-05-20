@@ -1,7 +1,7 @@
 import { TextMedium, TextRegular } from "@/components/StyledText";
 import { theme } from "@/components/Themed";
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
-import { TextInput } from "react-native";
+import {TextInput, TextStyle} from "react-native";
 import { StyleSheet } from 'react-native';
 
 type DefaultFormFieldType = {
@@ -13,8 +13,9 @@ type DefaultFormFieldType = {
     errorText: string;
     placeholderText: string;
     secureTextEntry?: boolean;
+    style?: TextStyle;
 }
-const DefaultFormField = ({ control, errors, keyboardType = 'default', label, controllerName, errorText, placeholderText, secureTextEntry=false }: DefaultFormFieldType) => {
+const DefaultFormField = ({ control, errors, keyboardType = 'default', label, controllerName, errorText, placeholderText, secureTextEntry=false, style }: DefaultFormFieldType) => {
     return (
         <>
             <TextMedium style={styles.label}>{label}</TextMedium>
@@ -24,7 +25,7 @@ const DefaultFormField = ({ control, errors, keyboardType = 'default', label, co
                 rules={{ required: errorText }}
                 render={({ field: { onChange, value } }) => (
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, style]}
                     placeholderTextColor='#999'
                     placeholder={placeholderText}
                     value={value}
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     // Android shadow
     elevation: 5,
+    color: theme.brown
   },
   error: {
     color: 'red',

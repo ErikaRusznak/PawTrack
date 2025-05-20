@@ -6,10 +6,10 @@ import { theme } from '@/components/Themed';
 import HeaderText from '@/components/atoms/HeaderText';
 import HeaderIcons from '@/components/atoms/HeaderIcons';
 import BackIcon from '@/components/atoms/BackIcon';
-import { useSession } from '@/context';
+import { useSession } from '@/context/AuthContext';
 import { Text as LoadingText } from '@/components/Themed';
 
-export default function TabLayout() {
+const TabLayout = () => {
   const headerShown = useClientOnlyValue(false, true)
   const { user, isLoading } = useSession();
   if(isLoading) {
@@ -115,3 +115,5 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+export default TabLayout;

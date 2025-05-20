@@ -6,7 +6,7 @@ import { login, logout, register } from "@/firebase/firebaseService";
 interface AuthContextType {
   signIn: (email: string, password: string) => Promise<User | undefined>;
 
-  signUp: (email: string, password: string, name?: string) => Promise<User | undefined>;
+  signUp: (firstName: string, lastName: string, age: number, county: string, email: string, password: string, picture?: string) => Promise<User | undefined>;
 
   signOut: () => void;
 
@@ -16,7 +16,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export function useSession(): AuthContextType {
+export const useSession = (): AuthContextType => {
   const value = useContext(AuthContext);
 
   if (process.env.NODE_ENV !== "production") {
@@ -27,7 +27,7 @@ export function useSession(): AuthContextType {
   return value;
 }
 
-export function SessionProvider(props: { children: React.ReactNode }) {
+export const SessionProvider = (props: { children: React.ReactNode }) => {
 
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,12 +51,16 @@ export function SessionProvider(props: { children: React.ReactNode }) {
   };
 
   const handleSignUp = async (
-    email: string,
-    password: string,
-    name?: string
+    firstName: string, 
+    lastName: string,
+    age: number, 
+    county: string,
+    email: string, 
+    password: string, 
+    picture?: string
   ) => {
     try {
-      const response = await register(email, password, name);
+      const response = await register(firstName, lastName, age, county, email, password, picture);
       return response?.user;
     } catch (error) {
       console.error("[handleSignUp error] ==>", error);
