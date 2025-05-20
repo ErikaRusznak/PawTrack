@@ -57,7 +57,7 @@ const SignUpScreen =()  => {
 
   return (
       <SafeAreaView style={styles.container}>
-        <ScrollView>
+        {/* <ScrollView> */}
         <TitleAuthScreen />
         <View style={styles.formContainer}>
           <View style={styles.row}>
@@ -143,7 +143,7 @@ const SignUpScreen =()  => {
             </TextMedium>
           </TextRegular>
         </View>
-        </ScrollView>
+        {/* </ScrollView> */}
       </SafeAreaView>
   );
 };
