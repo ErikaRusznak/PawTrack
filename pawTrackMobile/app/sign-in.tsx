@@ -2,7 +2,6 @@ import { StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { theme, View } from '@/components/Themed';
 import { useSession } from '@/context/AuthContext';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
 import { router } from 'expo-router';
 import { TextMedium, TextRegular } from '@/components/StyledText';
 import TitleAuthScreen from '@/components/atoms/authentication/TitleAuthScreen';

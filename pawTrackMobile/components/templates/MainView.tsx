@@ -1,4 +1,5 @@
 import { StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { theme } from '../Themed';
 
 const MainView = ({children}) => {
 
@@ -14,8 +15,7 @@ const MainView = ({children}) => {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        marginHorizontal: 20,
-        marginVertical: 10,
+        backgroundColor: "#f5f5f5",
     }
 })
 
