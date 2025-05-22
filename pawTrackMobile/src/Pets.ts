@@ -2,7 +2,7 @@ import { addDoc, collection, deleteDoc, doc, DocumentData, getDoc, getDocs, limi
 import { db } from "../firebase/firebaseConfig";
 
 const TABLE_NAME = 'pet';
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 5;
 
 export type Pet = {
     id: string;
