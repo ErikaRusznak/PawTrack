@@ -48,11 +48,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 4,
-    color: theme.brown,
+    color: "#443627"
   },
   input: {
     height: 50,
-    borderColor: theme.brown,
+    borderColor: "#443627",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 16,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     // Android shadow
     elevation: 5,
-    color: theme.brown,
+    color: "#443627",
   },
   error: {
     color: 'red',

@@ -1,15 +1,15 @@
-import { addDoc, collection, doc, DocumentData, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, DocumentData, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc } from 'firebase/firestore';
 import { db } from "../firebase/firebaseConfig";
 
 const TABLE_NAME = 'pet';
 const PAGE_SIZE = 4;
 
 export type Pet = {
-    id?: string;
+    id: string;
     name: string;
     age: number;
     details: string;
-    type: string;
+    animalType: string;
     found: boolean;
     picture?: string | null;
 };
@@ -37,7 +37,7 @@ export const getPets = async (
   startAfterDoc?: QueryDocumentSnapshot<DocumentData>
 ): Promise<{ pets: Pet[]; lastDoc: QueryDocumentSnapshot<DocumentData> | null; hasMore: boolean }> => {
   const petRef = collection(db, TABLE_NAME);
-  let petsQuery = query(petRef, orderBy("name"), limit(PAGE_SIZE + 1)); // fetch one extra
+  let petsQuery = query(petRef, orderBy("name"), limit(PAGE_SIZE + 1)); 
 
   if (startAfterDoc) {
     petsQuery = query(petRef, orderBy("name"), startAfter(startAfterDoc), limit(PAGE_SIZE + 1));
@@ -51,4 +51,15 @@ export const getPets = async (
   const lastDoc = pets.length > 0 ? docs[Math.min(PAGE_SIZE - 1, docs.length - 1)] : null;
 
   return { pets, lastDoc, hasMore };
+};
+
+
+export const updatePetFoundStatus = async (petId: string, found: boolean) => {
+  const ref = doc(db, TABLE_NAME, petId);
+  await updateDoc(ref, { found });
+};
+
+export const deletePet = async (petId: string) => {
+  const ref = doc(db, TABLE_NAME, petId);
+  await deleteDoc(ref);
 };

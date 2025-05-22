@@ -5,7 +5,7 @@ import DefaultFormField from '@/components/moleculas/form/DefaultFormField';
 import { theme } from '@/components/Themed';
 import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pet } from '@/src/Pets';
 import MainView from '../templates/MainView';
 
@@ -25,11 +25,33 @@ const animalTypes = [
 ];
 
 const PetForm = ({ defaultValues = {}, onSubmit, buttonText }: PetFormProps) => {
-  const { control, handleSubmit, formState: { errors }, setValue, reset } = useForm({ defaultValues });
+  const formDefaultValues = useMemo(() => ({
+    name: '',
+    age: '',
+    details: '',
+    animalType: null,
+    picture: null,
+    ...defaultValues,
+  }), [defaultValues]);
 
-  const [image, setImage] = useState(defaultValues.picture || null);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm({ defaultValues: formDefaultValues });
+
+  const [image, setImage] = useState(formDefaultValues.picture || null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState(defaultValues.animalType || null);
+  const [dropdownValue, setDropdownValue] = useState(formDefaultValues.animalType || null);
+
+
+  useEffect(() => {
+    reset(formDefaultValues);
+    setImage(formDefaultValues.picture || null);
+    setDropdownValue(formDefaultValues.animalType || null);
+  }, [formDefaultValues, reset]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -49,7 +71,9 @@ const PetForm = ({ defaultValues = {}, onSubmit, buttonText }: PetFormProps) => 
     await onSubmit(data, image);
     reset();
     setImage(null);
-  }
+  };
+
+  console.log("formDe", formDefaultValues)
 
   return (
     <View>
@@ -150,9 +174,9 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   image: { width: 120, height: 120, borderRadius: 100 },
-  label: { color: theme.brown, marginBottom: 4 },
+  label: { color: "#443627", marginBottom: 4 },
   dropdown: {
-    borderColor: theme.brown,
+    borderColor: "#443627",
     borderRadius: 8,
     paddingHorizontal: 16,
   },
@@ -167,14 +191,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   submit: {
-    backgroundColor: theme.orange,
+    backgroundColor: "#d98324",
     padding: 14,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 8,
   },
   submitText: {
-    color: theme.yellow,
+    color: "#f2f6d0"
   },
   input: {
     backgroundColor: "#fff"

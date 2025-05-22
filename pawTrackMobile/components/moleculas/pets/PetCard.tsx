@@ -6,7 +6,7 @@ import { theme } from '@/components/Themed';
 
 type PetCardProps = {
   pet: Pet;
-  onOptionsPress?: () => void;
+  onOptionsPress?: (pet: Pet) => void;
 };
 
 const PetCard = ({ pet, onOptionsPress }: PetCardProps) => {
@@ -17,9 +17,9 @@ const PetCard = ({ pet, onOptionsPress }: PetCardProps) => {
       )}
       <View style={styles.info}>
         <TextMedium style={styles.name}>{pet.name}</TextMedium>
-        <TextLight style={styles.age}>{pet.age} years old</TextLight>
+        <TextLight style={styles.age}>{pet.age} {pet.age === 1 ? 'year' : 'years'} old</TextLight>
       </View>
-      <TouchableOpacity onPress={onOptionsPress} style={styles.icon}>
+      <TouchableOpacity onPress={() => onOptionsPress?.(pet)} style={styles.icon}>
         <Feather name="more-vertical" size={20} color={theme.brown} />
       </TouchableOpacity>
     </View>
@@ -29,7 +29,7 @@ const PetCard = ({ pet, onOptionsPress }: PetCardProps) => {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    backgroundColor: theme.beige,
+    backgroundColor: "#efdcab",
     borderRadius: 16,
     alignItems: 'center',
     elevation: 5,

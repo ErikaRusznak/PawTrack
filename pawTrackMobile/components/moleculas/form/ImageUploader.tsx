@@ -48,12 +48,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 4,
-    color: theme.brown,
+    color: "#443627",
   },
   uploadBox: {
     height: 70,
     borderWidth: 2,
-    borderColor: theme.orange,
+    borderColor: "#d98324",
     borderStyle: 'dashed',
     borderRadius: 16,
     backgroundColor: '#f5f5f5',
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   uploadText: {
     marginTop: 8,
-    color: theme.orange,
+    color:"#d98324",
     fontSize: 16,
     fontWeight: '500',
   },

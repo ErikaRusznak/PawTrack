@@ -5,9 +5,10 @@ import PetCard from '@/components/moleculas/pets/PetCard';
 import { TextMedium } from '@/components/StyledText';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { getPets, Pet } from '@/src/Pets';
+import { deletePet, getPets, Pet, updatePetFoundStatus } from '@/src/Pets';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import Pagination from '@/components/atoms/Pagination';
+import PetActionsPopup from '@/components/moleculas/pets/PetActionsPopup';
 
 const PetsScreen = () => {
 
@@ -34,7 +35,7 @@ const PetsScreen = () => {
     }
 
     const { pets: newPets, lastDoc, hasMore } = await getPets(cursor);
-    
+
     setPets(newPets);
     setHasNextPage(hasMore);
     if (direction === 'next') {
@@ -56,6 +57,36 @@ const PetsScreen = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      const { pets: initialPets, lastDoc } = await getPets();
+      setPets(initialPets);
+      setLastDocs([lastDoc!]);
+    })();
+  }, [pets]);
+
+
+  // pop up
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [popupVisible, setPopupVisible] = useState(false);
+
+  const handleOptions = (pet: Pet) => {
+    setSelectedPet(pet);
+    setPopupVisible(true);
+  };
+
+  const handleMarkAsFound = async (petId: string) => {
+    await updatePetFoundStatus(petId, true);
+    const { pets: updatedPets } = await getPets(lastDocs[currentPage - 1]);
+    setPets(updatedPets);
+  };
+
+  const handleDelete = async (petId: string) => {
+    await deletePet(petId);
+    const { pets: updatedPets } = await getPets(lastDocs[currentPage - 1]);
+    setPets(updatedPets);
+  };
+
   return (
     <MainView>
       <View style={styles.screen}>
@@ -67,7 +98,7 @@ const PetsScreen = () => {
         </View>
         <View style={styles.petCards}>
           {pets.map((pet) => (
-            <PetCard key={pet.id} pet={pet} /*onOptionsPress={() => handleOptions(pet)}*/ />
+            <PetCard key={pet.id} pet={pet} onOptionsPress={() => handleOptions(pet)} />
           ))}
         </View>
         <Pagination
@@ -79,6 +110,15 @@ const PetsScreen = () => {
         />
       </View>
 
+      {selectedPet && (
+        <PetActionsPopup
+          visible={popupVisible}
+          onClose={() => setPopupVisible(false)}
+          pet={selectedPet!}
+          onMarkAsFound={handleMarkAsFound}
+          onDelete={handleDelete}
+        />
+      )}
     </MainView>
   );
 };
@@ -102,7 +142,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   addPetButton: {
-    backgroundColor: theme.orange,
+    backgroundColor: "#d98324",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 16,
@@ -113,10 +153,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 2 },
     borderWidth: 1,
-    borderColor: theme.brown,
+    borderColor: "#443627",
   },
   addPetText: {
-    color: theme.yellow,
+    color: "#f2f6d0",
     fontSize: 24,
   },
 });
