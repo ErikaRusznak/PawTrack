@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Pet } from '@/src/Pets';
 import { Feather } from '@expo/vector-icons';
 import { TextLight, TextMedium } from '@/components/StyledText';
-import { theme } from '@/components/Themed';
+import { getTheme } from '@/components/Themed';
 
 type PetCardProps = {
   pet: Pet;
@@ -10,6 +10,7 @@ type PetCardProps = {
 };
 
 const PetCard = ({ pet, onOptionsPress }: PetCardProps) => {
+  const theme = getTheme();
   return (
     <View style={[styles.card, !pet.found && styles.cardRed]}>
       {pet.picture && (

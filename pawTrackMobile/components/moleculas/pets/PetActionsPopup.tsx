@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Alert } from 'react-native';
-import { theme } from '@/components/Themed';
+import { getTheme } from '@/components/Themed';
 import { Pet } from '@/src/Pets';
 import { useRouter } from 'expo-router';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -14,7 +14,7 @@ type Props = {
 
 export default function PetActionsPopup({ visible, onClose, pet, onMarkAsFound, onDelete }: Props) {
   const router = useRouter();
-  
+  const theme = getTheme();
   return (
     <Modal visible={visible} transparent animationType="fade">
       <TouchableOpacity style={styles.overlay} onPress={onClose}>
@@ -34,7 +34,7 @@ export default function PetActionsPopup({ visible, onClose, pet, onMarkAsFound, 
             router.replace(`/(tabs)/pets/edit/${pet.id}`);
           }}>
             <View style={styles.iconTextRow}>
-              <Feather name="edit" size={20} color={theme.brown}  />
+              <Feather name="edit" size={20} color={theme.brown} />
               <Text style={styles.text}>Edit</Text>
             </View>
           </TouchableOpacity>
@@ -47,7 +47,7 @@ export default function PetActionsPopup({ visible, onClose, pet, onMarkAsFound, 
             ]);
           }}>
             <View style={styles.iconTextRow}>
-              <MaterialCommunityIcons name="trash-can" size={20} color={theme.brown}  />
+              <MaterialCommunityIcons name="trash-can" size={20} color={theme.brown} />
               <Text style={[styles.text, { color: theme.brown }]}>Delete</Text>
             </View>
           </TouchableOpacity>
@@ -61,7 +61,7 @@ export default function PetActionsPopup({ visible, onClose, pet, onMarkAsFound, 
               ]);
             }}>
               <View style={styles.iconTextRow}>
-                <Feather name="check-circle" size={20} color={theme.brown}  />
+                <Feather name="check-circle" size={20} color={theme.brown} />
                 <Text style={[styles.text, { color: theme.brown }]}>Found</Text>
               </View>
             </TouchableOpacity>

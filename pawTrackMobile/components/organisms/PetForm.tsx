@@ -1,11 +1,11 @@
 import { useForm, Controller } from 'react-hook-form';
-import { View, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { TextMedium } from '@/components/StyledText';
 import DefaultFormField from '@/components/moleculas/form/DefaultFormField';
-import { theme } from '@/components/Themed';
+import { getTheme } from '@/components/Themed';
 import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Pet } from '@/src/Pets';
 
 type PetFormProps = {
@@ -24,34 +24,12 @@ const animalTypes = [
 ];
 
 const PetForm = ({ onSubmit, buttonText }: PetFormProps) => {
-  // const formDefaultValues = useMemo(() => ({
-  //   name: '',
-  //   age: '',
-  //   details: '',
-  //   animalType: null,
-  //   picture: null,
-  //   ...defaultValues,
-  // }), [defaultValues]);
 
-    const { control, handleSubmit, formState: { errors }, setValue, reset } = useForm<any>();
-
-  // const {
-  //   control,
-  //   handleSubmit,
-  //   formState: { errors },
-  //   setValue,
-  //   reset,
-  // } = useForm({ defaultValues: formDefaultValues });
-
+  const { control, handleSubmit, formState: { errors }, setValue, reset } = useForm<any>();
+  const theme = getTheme();
   const [image, setImage] = useState<any>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownValue, setDropdownValue] = useState(null);
-
-  // useEffect(() => {
-  //   reset(formDefaultValues);
-  //   setImage(formDefaultValues.picture || null);
-  //   setDropdownValue(formDefaultValues.animalType || null);
-  // }, [formDefaultValues, reset]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -64,7 +42,7 @@ const PetForm = ({ onSubmit, buttonText }: PetFormProps) => {
       const uri = result.assets[0].uri;
       if (uri !== image) {
         setImage(uri);
-        setValue("picture", uri); 
+        setValue("picture", uri);
       }
     }
   };
@@ -72,14 +50,9 @@ const PetForm = ({ onSubmit, buttonText }: PetFormProps) => {
   const onSubmitHandler = async (data: Pet) => {
     await onSubmit(data, image);
     reset();
-    if(buttonText === 'Submit') setImage(null);
+    if (buttonText === 'Submit') setImage(null);
   };
 
-//   useEffect(() => {
-//   reset(defaultValues);
-//   setImage(defaultValues.picture || null);
-//   setDropdownValue(defaultValues.animalType || null);
-// }, [defaultValues, reset]);
 
   return (
     <View>

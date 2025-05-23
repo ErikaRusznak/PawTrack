@@ -2,7 +2,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { View, StyleSheet, TextInput, TouchableOpacity, Image, Text } from 'react-native';
 import { TextMedium } from '@/components/StyledText';
 import DefaultFormField from '@/components/moleculas/form/DefaultFormField';
-import { theme } from '@/components/Themed';
 import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useEffect, useState } from 'react';
@@ -12,6 +11,7 @@ import Toast from 'react-native-toast-message';
 import { storage } from '@/firebase/firebaseConfig';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import uuid from 'react-native-uuid';
+import { getTheme } from '../Themed';
 
 const animalTypes = [
   { label: "Cat", value: "Cat" },
@@ -23,6 +23,7 @@ const animalTypes = [
 ];
 
 const EditPetForm = () => {
+  const theme = getTheme();
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
