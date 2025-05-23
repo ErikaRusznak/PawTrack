@@ -37,7 +37,7 @@ const DefaultFormField = ({ control, errors, keyboardType = 'default', label, co
           />)}
       />
       {errors[controllerName] && (
-        <TextRegular style={styles.error}>{`${errors[controllerName].message}`}</TextRegular>
+        <TextMedium style={styles.error}>{`${errors[controllerName].message}`}</TextMedium>
       )}
     </>
   );
