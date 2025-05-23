@@ -25,12 +25,12 @@ const TabLayout = () => {
       screenOptions={{
         headerShown: headerShown,
         headerStyle: {
-          backgroundColor: theme.beige,
+          backgroundColor: "#efdcab",
         },
-        tabBarActiveTintColor: theme.orange,
-        tabBarInactiveTintColor: theme.brown,
+        tabBarActiveTintColor: "#d98324",
+        tabBarInactiveTintColor: "#443627",
         tabBarStyle: {
-          backgroundColor: theme.beige,
+          backgroundColor: "#efdcab",
         }
       }}>
       <Tabs.Screen
@@ -117,7 +117,7 @@ const TabLayout = () => {
           href: null,
           animation: 'fade',
           headerTitleAlign: 'left',
-          headerLeft: () => <BackIcon backPage='/(tabs)/pets'/>,
+          headerLeft: () => <BackIcon backPage='/(tabs)/pets' />,
           headerTitle: () => <HeaderText text={'Add Pet'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
@@ -128,8 +128,19 @@ const TabLayout = () => {
           href: null,
           animation: 'fade',
           headerTitleAlign: 'left',
-          headerLeft: () => <BackIcon backPage='/(tabs)/pets'/>,
+          headerLeft: () => <BackIcon backPage='/(tabs)/pets' />,
           headerTitle: () => <HeaderText text={'Edit Pet'} />,
+          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
+        }}
+      />
+      <Tabs.Screen
+        name="pets/view/[id]"
+        options={{
+          href: null,
+          animation: 'fade',
+          headerTitleAlign: 'left',
+          headerLeft: () => <BackIcon backPage='/(tabs)/pets' />,
+          headerTitle: () => <HeaderText text={'Details About Pet'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
       />

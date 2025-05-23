@@ -1,13 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { RelativePathString, useRouter } from "expo-router";
 import { Pressable } from "react-native";
-import { theme } from "../Themed";
+import { getTheme } from "../Themed";
 
 type BackIconProps = {
     backPage?: string;
 }
 const BackIcon = ({ backPage = '' }: BackIconProps) => {
     const router = useRouter();
+    const theme = getTheme();
     return (
         <>
             <Pressable>
@@ -20,3 +21,4 @@ const BackIcon = ({ backPage = '' }: BackIconProps) => {
 };
 
 export default BackIcon;
+

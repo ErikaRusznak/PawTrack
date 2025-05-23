@@ -152,44 +152,44 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 4,
-    color: theme.brown,
+    color: "#443627",
   },
   row: {
     flexDirection: 'row',
     gap: 2,
     justifyContent: 'space-between',
-    backgroundColor: theme.beige,
+    backgroundColor: "#efdcab",
   },
   customInput: {
-    backgroundColor: theme.beige,
+    backgroundColor: "#efdcab",
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: theme.beige,
+    backgroundColor: "#efdcab",
   },
   formContainer: {
     alignSelf: 'center',
     width: '80%',
-    backgroundColor: theme.beige,
+    backgroundColor: "#efdcab",
   },
   button: {
-    backgroundColor: theme.orange,
+    backgroundColor: "#d98324",
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 8,
   },
   buttonText: {
-    color: theme.yellow,
+    color: "#f2f6d0",
   },
   bottomText: {
     marginTop: 24,
     textAlign: 'center',
-    color: theme.brown,
+    color: "#443627",
   },
   link: {
-    color: theme.orange,
+    color: "#d98324",
   },
 });
 

@@ -1,5 +1,4 @@
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Text, theme, View } from '@/components/Themed';
 import MainView from '@/components/templates/MainView';
 import { useSession } from '@/context/AuthContext';
 import { TextMedium } from '@/components/StyledText';
@@ -19,14 +18,14 @@ const ProfileScreen = () => {
 
 const styles = StyleSheet.create({
   logoutButton: {
-    backgroundColor: theme.orange,
+    backgroundColor: "#d98324",
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 8,
   },
   logoutText: {
-    color: theme.yellow,
+    color: "#f2f6d0",
   },
 });
 

@@ -14,7 +14,7 @@ const TitleAuthScreen = () => {
 
 const styles = StyleSheet.create({
   title: {
-    backgroundColor: theme.beige,
+    backgroundColor: "#efdcab",
     alignSelf: 'center',
     display: 'flex',
     flexDirection: 'row',
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 32,
     textAlign: 'center',
-    color: theme.brown
+    color: "#443627"
   },
 });
 

@@ -1,18 +1,17 @@
 import { useForm, Controller } from 'react-hook-form';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, Image, Text } from 'react-native';
 import { TextMedium } from '@/components/StyledText';
 import DefaultFormField from '@/components/moleculas/form/DefaultFormField';
-import { getTheme } from '@/components/Themed';
 import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useState } from 'react';
-import { Pet } from '@/src/Pets';
-
-type PetFormProps = {
-  defaultValues?: any;
-  onSubmit: (data: Pet, uri: string) => Promise<void>;
-  buttonText: string;
-};
+import { useEffect, useState } from 'react';
+import { Pet, getPetById, updatePet } from '@/src/Pets';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import Toast from 'react-native-toast-message';
+import { storage } from '@/firebase/firebaseConfig';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import uuid from 'react-native-uuid';
+import { getTheme } from '../Themed';
 
 const animalTypes = [
   { label: "Cat", value: "Cat" },
@@ -23,13 +22,36 @@ const animalTypes = [
   { label: "Other", value: "other" },
 ];
 
-const PetForm = ({ onSubmit, buttonText }: PetFormProps) => {
-
-  const { control, handleSubmit, formState: { errors }, setValue, reset } = useForm<any>();
+const EditPetForm = () => {
   const theme = getTheme();
-  const [image, setImage] = useState<any>(null);
+  const { id } = useLocalSearchParams();
+  const router = useRouter();
+  const [image, setImage] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState(null);
+  const [dropdownValue, setDropdownValue] = useState<string | null>(null);
+  const { control, handleSubmit, setValue, formState: { errors }, reset } = useForm<any>();
+
+  const loadPet = async () => {
+    try {
+      const pet = await getPetById(id as string);
+      if (pet) {
+        const prepared = {
+          ...pet,
+          age: String(pet.age),
+        };
+        reset(prepared);
+        setImage(pet.picture || null);
+        setDropdownValue(pet.animalType || null);
+      }
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Failed to load pet data' });
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    loadPet();
+  }, [id]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -48,11 +70,30 @@ const PetForm = ({ onSubmit, buttonText }: PetFormProps) => {
   };
 
   const onSubmitHandler = async (data: Pet) => {
-    await onSubmit(data, image);
-    reset();
-    if (buttonText === 'Submit') setImage(null);
-  };
+    try {
+      let pictureUrl = data.picture;
 
+      if (image && image !== data.picture) {
+        const response = await fetch(image);
+        const blob = await response.blob();
+        const fileRef = ref(storage, `petPictures/${uuid.v4()}.jpg`);
+        await uploadBytes(fileRef, blob);
+        pictureUrl = await getDownloadURL(fileRef);
+      }
+
+      await updatePet(id as string, {
+        ...data,
+        picture: pictureUrl,
+        age: Number(data.age),
+      });
+
+      Toast.show({ type: 'success', text1: 'Pet updated!' });
+      router.replace("/(tabs)/pets");
+    } catch (err) {
+      Toast.show({ type: 'error', text1: 'Update failed' });
+      console.error(err);
+    }
+  };
 
   return (
     <View>
@@ -131,16 +172,13 @@ const PetForm = ({ onSubmit, buttonText }: PetFormProps) => {
         onPress={handleSubmit(onSubmitHandler)}
         style={styles.submit}
       >
-        <TextMedium style={styles.submitText}>{buttonText}</TextMedium>
+        <TextMedium style={styles.submitText}>Update</TextMedium>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20
-  },
   imagePicker: {
     alignSelf: "center",
     borderRadius: 100,
@@ -184,4 +222,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PetForm;
+export default EditPetForm;

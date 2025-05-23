@@ -3,7 +3,7 @@ import { db } from "../firebase/firebaseConfig";
 
 const TABLE_NAME = 'users';
 
-type UserData = {
+export type UserData = {
     firstName: string;
     lastName: string;
     age: number;
