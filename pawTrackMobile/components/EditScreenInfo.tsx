@@ -3,11 +3,9 @@ import { StyleSheet } from 'react-native';
 import { TextBold, TextLight, TextMedium, TextRegular, TextSemiBold } from './StyledText';
 import { View } from './Themed';
 
-import MainView from './templates/MainView';
-
 export default function EditScreenInfo({ path='' }: { path?: string }) {
   return (
-    <MainView>
+    <View>
       <View style={styles.getStartedContainer}>
         <TextBold>
           This is a bold text
@@ -32,7 +30,7 @@ export default function EditScreenInfo({ path='' }: { path?: string }) {
       </View>
 
       
-    </MainView>
+    </View>
   );
 }
 

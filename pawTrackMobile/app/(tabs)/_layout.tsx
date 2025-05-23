@@ -2,7 +2,6 @@ import React from 'react';
 import { AntDesign, Feather, Octicons, Ionicons } from '@expo/vector-icons';
 import { Redirect, Tabs } from 'expo-router';
 import { useClientOnlyValue } from '@/hooks/useClientOnlyValue';
-import { theme } from '@/components/Themed';
 import HeaderText from '@/components/atoms/HeaderText';
 import HeaderIcons from '@/components/atoms/HeaderIcons';
 import BackIcon from '@/components/atoms/BackIcon';

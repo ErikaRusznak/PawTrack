@@ -2,7 +2,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from '@/components/Themed';
 import Toast from 'react-native-toast-message';
-import PetForm from '@/components/organisms/PetForm';
 import { getPetById, updatePet } from '@/src/Pets';
 
 const ViewPetScreen = () => {

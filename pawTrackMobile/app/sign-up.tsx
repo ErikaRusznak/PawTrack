@@ -1,5 +1,5 @@
-import {SafeAreaView, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
-import { theme, View} from '@/components/Themed';
+import {SafeAreaView, StyleSheet, TouchableOpacity} from 'react-native';
+import { View } from '@/components/Themed';
 import { useSession } from '@/context/AuthContext';
 import {useForm} from "react-hook-form";
 import TitleAuthScreen from "@/components/atoms/authentication/TitleAuthScreen";

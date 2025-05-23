@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Text, TouchableOpacity, StyleSheet, Alert, Image, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { theme } from '@/components/Themed';
 import { TextMedium } from '@/components/StyledText';
 
 const ImageUploader = ({ onImageSelected }: { onImageSelected: (uri: string) => void }) => {

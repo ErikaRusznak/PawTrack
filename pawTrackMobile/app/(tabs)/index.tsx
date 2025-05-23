@@ -1,22 +1,26 @@
 import { StyleSheet } from 'react-native';
-
 import { Text, View } from '@/components/Themed';
-import MainView from '@/components/templates/MainView';
 import EditScreenInfo from '@/components/EditScreenInfo';
 
-const HomeScreen =()  => {
+const HomeScreen = () => {
   return (
-    <MainView>
+    <View style={styles.main}>
       <Text style={styles.title}>Home Screen</Text>
       <EditScreenInfo />
-    </MainView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
   title: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    flex: 1,
+    marginHorizontal: 20,
+    marginVertical: 10,
   },
 });
 

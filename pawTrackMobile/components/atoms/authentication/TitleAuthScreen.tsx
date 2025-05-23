@@ -1,15 +1,16 @@
 import { TextSemiBold } from "@/components/StyledText";
-import { theme, View } from "@/components/Themed";
+import { getTheme, View } from "@/components/Themed";
 import { FontAwesome } from "@expo/vector-icons";
 import { StyleSheet } from 'react-native';
 
 const TitleAuthScreen = () => {
-    return (
-        <View style={styles.title}>
-            <TextSemiBold style={styles.titleText}>PawTrack</TextSemiBold>
-            <FontAwesome name="paw" size={28} color={theme.orange} />
-        </View>
-    );
+  const theme = getTheme();
+  return (
+    <View style={styles.title}>
+      <TextSemiBold style={styles.titleText}>PawTrack</TextSemiBold>
+      <FontAwesome name="paw" size={28} color={theme.orange} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
