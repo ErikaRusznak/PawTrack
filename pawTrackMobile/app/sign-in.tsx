@@ -1,5 +1,5 @@
 import { StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import { theme, View } from '@/components/Themed';
+import { View } from '@/components/Themed';
 import { useSession } from '@/context/AuthContext';
 import { useForm } from 'react-hook-form';
 import { router } from 'expo-router';
@@ -13,7 +13,6 @@ type LoginData = {
 }
 
 const SignInScreen = () => {
-
   const { signIn } = useSession();
   const { control, handleSubmit, formState: { errors } } = useForm();
   

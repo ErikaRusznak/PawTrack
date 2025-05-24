@@ -1,5 +1,4 @@
 import { TextMedium, TextRegular } from "@/components/StyledText";
-import { theme } from "@/components/Themed";
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
 import { TextInput, TextStyle } from "react-native";
 import { StyleSheet } from 'react-native';
@@ -38,7 +37,7 @@ const DefaultFormField = ({ control, errors, keyboardType = 'default', label, co
           />)}
       />
       {errors[controllerName] && (
-        <TextRegular style={styles.error}>{`${errors[controllerName].message}`}</TextRegular>
+        <TextMedium style={styles.error}>{`${errors[controllerName].message}`}</TextMedium>
       )}
     </>
   );

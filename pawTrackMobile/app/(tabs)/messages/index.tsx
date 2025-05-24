@@ -1,16 +1,20 @@
 import { StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
-import MainView from '@/components/templates/MainView';
 
 const MessagesScreen = () => {
   return (
-    <MainView>
+    <View style={styles.main}>
       <Text style={styles.title}>Messages Screen</Text>
-    </MainView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',

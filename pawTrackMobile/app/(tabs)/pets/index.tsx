@@ -1,6 +1,5 @@
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Text, theme, View } from '@/components/Themed';
-import MainView from '@/components/templates/MainView';
+import { View } from '@/components/Themed';
 import PetCard from '@/components/moleculas/pets/PetCard';
 import { TextMedium } from '@/components/StyledText';
 import { useRouter } from 'expo-router';
@@ -88,7 +87,7 @@ const PetsScreen = () => {
   };
 
   return (
-    <MainView>
+    <>
       <View style={styles.screen}>
         <View style={styles.filterAndAdd}>
           <TextMedium></TextMedium>
@@ -119,12 +118,14 @@ const PetsScreen = () => {
           onDelete={handleDelete}
         />
       )}
-    </MainView>
+    </>
+
   );
 };
 
 const styles = StyleSheet.create({
   screen: {
+    flex: 1,
     marginHorizontal: 20,
     marginVertical: 10,
     display: "flex",
