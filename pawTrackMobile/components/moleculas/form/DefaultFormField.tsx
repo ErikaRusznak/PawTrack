@@ -34,6 +34,8 @@ const DefaultFormField = ({ control, errors, keyboardType = 'default', label, co
             secureTextEntry={secureTextEntry}
             multiline={true}
             numberOfLines={4}
+            blurOnSubmit={true}
+            returnKeyType="done"
           />)}
       />
       {errors[controllerName] && (
