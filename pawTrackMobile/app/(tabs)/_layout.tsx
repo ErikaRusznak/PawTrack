@@ -106,7 +106,7 @@ const TabLayout = () => {
           animation: 'fade',
           headerTitleAlign: 'left',
           headerLeft: () => <BackIcon />,
-          headerTitle: () => <HeaderText text={'Search vet offices'} />,
+          headerTitle: () => <HeaderText text={'Vet offices'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
       />

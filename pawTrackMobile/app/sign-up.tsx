@@ -1,7 +1,7 @@
 import {SafeAreaView, StyleSheet, TouchableOpacity} from 'react-native';
-import { View } from '@/components/Themed';
+import {getTheme, View} from '@/components/Themed';
 import { useSession } from '@/context/AuthContext';
-import {useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import TitleAuthScreen from "@/components/atoms/authentication/TitleAuthScreen";
 import DefaultFormField from "@/components/moleculas/form/DefaultFormField";
 import {TextMedium, TextRegular} from "@/components/StyledText";
@@ -11,6 +11,8 @@ import { useState } from 'react';
 import { storage } from '@/firebase/firebaseConfig';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import uuid from 'react-native-uuid';
+import DropDownPicker from "react-native-dropdown-picker";
+import {ROMANIAN_COUNTIES} from "@/constants/Counties";
 
 type RegisterData = {
   firstName: string;
@@ -26,6 +28,11 @@ const SignUpScreen =()  => {
   const { signUp } = useSession();
   const { control, handleSubmit, formState: { errors } } = useForm();
   const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
+  const [countyDropdownOpen, setCountyDropdownOpen] = useState(false);
+  const [countyDropdownValue, setCountyDropdownValue] = useState(null);
+  const theme = getTheme();
+
+  const counties = ROMANIAN_COUNTIES.map((county) => ({ label: county, value: county }))
 
   const handleRegister = async (data: RegisterData) => {
     try {
@@ -99,15 +106,35 @@ const SignUpScreen =()  => {
               />
             </View>
             <View style={styles.customInput}>
-              <DefaultFormField
+              <TextMedium style={styles.label}>County</TextMedium>
+              <Controller
                   control={control}
-                  errors={errors}
-                  label='County'
-                  controllerName='county'
-                  errorText='County is required'
-                  placeholderText='County...'
-                  style={{width: 150}}
+                  name="petId"
+                  rules={{ required: 'County is required' }}
+                  render={({ field: { onChange, value } }) => (
+                      <DropDownPicker
+                          open={countyDropdownOpen}
+                          value={countyDropdownValue}
+                          items={counties}
+                          setOpen={setCountyDropdownOpen}
+                          setValue={(cb) => {
+                            const val = cb(countyDropdownValue);
+                            onChange(val);
+                            setCountyDropdownValue(val);
+                          }}
+                          placeholder="Select County"
+                          style={styles.dropdown}
+                          placeholderStyle={{ fontFamily: 'Montserrat-Regular', color: '#999' }}
+                          textStyle={{ fontFamily: 'Montserrat-Regular', color: theme.brown }}
+                          labelStyle={{ fontFamily: 'Montserrat-Regular', color: theme.brown }}
+                          containerStyle={{ marginBottom: 16 }}
+                      />
+                  )}
               />
+              {errors.petId && (
+                  <TextMedium style={styles.error}>{errors.petId.message as string}</TextMedium>
+              )}
+
             </View>
           </View>
 
@@ -153,6 +180,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 4,
     color: "#443627",
+  },
+  dropdown: {
+    borderColor: '#443627',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    backgroundColor: '#fff',
+    zIndex: 999,
+    width: 150
+  },
+  error: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 16,
+    marginTop: -16,
   },
   row: {
     flexDirection: 'row',
