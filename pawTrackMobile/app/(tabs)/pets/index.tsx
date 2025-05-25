@@ -105,12 +105,12 @@ const styles = StyleSheet.create({
   petCards: {
     flexDirection: "column",
     gap: 20,
-    paddingBottom: 20,
+    marginHorizontal: 2
   },
   addPetButton: {
     backgroundColor: "#d98324",
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 4,
     borderRadius: 16,
     marginTop: 10,
     elevation: 5,
@@ -118,8 +118,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 2 },
-    borderWidth: 1,
-    borderColor: "#443627",
   },
   addPetText: {
     color: "#f2f6d0",
