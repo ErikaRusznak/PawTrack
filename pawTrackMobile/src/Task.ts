@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, DocumentData, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, DocumentData, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc, where } from 'firebase/firestore';
 import { db } from "../firebase/firebaseConfig";
 
 const TABLE_NAME = 'task';
@@ -19,3 +19,23 @@ export const addTask = async (task: Task) => {
   await setDoc(newTaskRef, taskWithId);
 };
 
+export const getTasksForPets = async (petIds: string[], date: Date): Promise<Task[]> => {
+  if (!petIds.length) return [];
+  const taskRef = collection(db, TABLE_NAME);
+  const startOfDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0));
+  const endOfDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59, 999));
+
+  try {
+    const tasksQuery = query(
+      taskRef,
+      where("petId", "in", petIds),
+      where("taskDate", ">=", startOfDay),
+      where("taskDate", "<=", endOfDay)
+    );
+    const snapshot = await getDocs(tasksQuery);
+    return snapshot.docs.map((doc) => doc.data() as Task);
+  } catch (err) {
+    console.error("Error fetching tasks:", err);
+    return [];
+  }
+};

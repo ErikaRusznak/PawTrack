@@ -1,3 +1,4 @@
+import CustomCalendar from '@/components/atoms/CustomCalendar';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
@@ -14,7 +15,7 @@ type Props = {
 const hours = Array.from({ length: 24 }, (_, i) => i);
 const minutes = Array.from({ length: 60 }, (_, i) => i);
 
-export default function CustomDateTimePicker({ value, onChange, visible, onClose, theme }: Props) {
+const CustomDateTimePicker = ({ value, onChange, visible, onClose, theme }: Props) => {
     const [selectedDate, setSelectedDate] = useState(value || new Date());
     const [showTime, setShowTime] = useState(false);
     const [selectedHour, setSelectedHour] = useState(value ? value.getHours() : 12);
@@ -47,20 +48,9 @@ export default function CustomDateTimePicker({ value, onChange, visible, onClose
                     {!showTime ? (
                         <>
                             <Text style={[styles.title, { color: theme.brown }]}>Select Date</Text>
-                            <Calendar
-                                onDayPress={handleDateSelect}
-                                markedDates={{
-                                    [selectedDate.toISOString().split('T')[0]]: { selected: true, selectedColor: theme.orange }
-                                }}
-                                theme={{
-                                    calendarBackground: theme.white,
-                                    textSectionTitleColor: theme.brown,
-                                    selectedDayBackgroundColor: theme.orange,
-                                    selectedDayTextColor: theme.white,
-                                    todayTextColor: theme.orange,
-                                    dayTextColor: theme.brown,
-                                    arrowColor: theme.orange,
-                                }}
+                            <CustomCalendar 
+                                handleDateSelect={handleDateSelect}
+                                selectedDate={selectedDate}
                             />
                             <TouchableOpacity onPress={onClose} style={styles.cancelBtn}>
                                 <Text style={{ color: theme.brown }}>Cancel</Text>
@@ -153,3 +143,5 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     }
 });
+
+export default CustomDateTimePicker;
