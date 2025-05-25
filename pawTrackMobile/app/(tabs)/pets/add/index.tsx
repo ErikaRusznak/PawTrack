@@ -7,6 +7,7 @@ import { StyleSheet } from 'react-native';
 import uuid from 'react-native-uuid';
 import { storage } from '@/firebase/firebaseConfig';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddPetScreen = () => {
   const router = useRouter();
@@ -22,9 +23,12 @@ const AddPetScreen = () => {
         await uploadBytes(fileRef, blob);
         pictureUrl = await getDownloadURL(fileRef);
       }
-
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) throw new Error('User ID not found in storage');
+      
       const petToSave: Pet = {
         ...data,
+        userId: userId,
         picture: pictureUrl,
         age: Number(data.age),
         found: true,

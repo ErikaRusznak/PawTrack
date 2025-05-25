@@ -6,6 +6,7 @@ const PAGE_SIZE = 5;
 
 export type Pet = {
     id: string;
+    userId: string;
     name: string;
     age: number;
     details: string;
@@ -63,3 +64,7 @@ export const deletePet = async (petId: string) => {
   const ref = doc(db, TABLE_NAME, petId);
   await deleteDoc(ref);
 };
+
+export const getPetCountForUserId = async (userId: string) => {
+  // implement
+}
