@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import {View, Text, Image, ScrollView, StyleSheet} from 'react-native';
 import { getPetById } from '@/src/Pets';
 import { getTasksByPetId } from '@/src/Task';
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import {MaterialIcons, FontAwesome, AntDesign} from '@expo/vector-icons';
 
 import {getTheme} from "@/components/Themed";
 
@@ -12,6 +12,11 @@ const ViewPetScreen = () => {
   const theme = getTheme();
   const [petData, setPetData] = useState<any>(null);
   const [tasks, setTasks] = useState<any[]>([]);
+
+  const ITEMS_PER_PAGE = 3;
+
+  const [vaccinationPage, setVaccinationPage] = useState(0);
+  const [appointmentPage, setAppointmentPage] = useState(0);
 
   useEffect(() => {
     const loadPetAndTasks = async () => {
@@ -47,6 +52,18 @@ const ViewPetScreen = () => {
     }
   };
 
+  const paginate = (items: any[], page: number) => {
+    const start = page * ITEMS_PER_PAGE;
+    return items.slice(start, start + ITEMS_PER_PAGE);
+  };
+
+  const canGoNext = (items: any[], page: number) => {
+    return (page + 1) * ITEMS_PER_PAGE < items.length;
+  };
+
+  const canGoPrev = (page: number) => page > 0;
+
+
   return (
       <ScrollView style={styles.main}>
         <View style={styles.profileSection}>
@@ -60,11 +77,11 @@ const ViewPetScreen = () => {
           </View>
         </View>
 
-        <View style={{ marginBottom: 24 }}>
+        <View style={{  }}>
           <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown }}>
             <FontAwesome name="medkit" size={16} /> Vaccinations
           </Text>
-          {vaccinations.map((v, i) => (
+          {paginate(vaccinations, vaccinationPage).map((v, i) => (
               <View
                   key={i}
                   style={{
@@ -86,11 +103,47 @@ const ViewPetScreen = () => {
           ))}
         </View>
 
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ alignItems: 'center', marginTop: 10   }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <AntDesign
+                name="left"
+                size={20}
+                color={vaccinationPage > 0 ? theme.brown : '#ccc'}
+                onPress={() => {
+                  if (vaccinationPage > 0) setVaccinationPage(p => p - 1);
+                }}
+            />
+            <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.brown,
+                  borderRadius: 999,
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                }}
+            >
+              <Text style={{ fontSize: 16, color: theme.brown }}>{vaccinationPage + 1}</Text>
+            </View>
+            <AntDesign
+                name="right"
+                size={20}
+                color={(vaccinationPage + 1) * ITEMS_PER_PAGE < vaccinations.length ? theme.brown : '#ccc'}
+                onPress={() => {
+                  if ((vaccinationPage + 1) * ITEMS_PER_PAGE < vaccinations.length) {
+                    setVaccinationPage(p => p + 1);
+                  }
+                }}
+            />
+          </View>
+        </View>
+
+
+
+        <View style={{ marginTop: 24 }}>
           <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown }}>
             <FontAwesome name="user-md" size={16} /> Vet Appointments
           </Text>
-          {appointments.map((v, i) => (
+          {paginate(appointments, appointmentPage).map((v, i) => (
               <View
                   key={i}
                   style={{
@@ -111,6 +164,41 @@ const ViewPetScreen = () => {
               </View>
           ))}
         </View>
+        <View style={{ alignItems: 'center', marginTop: 10 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <AntDesign
+                name="left"
+                size={20}
+                color={appointmentPage > 0 ? theme.brown : '#ccc'}
+                onPress={() => {
+                  if (appointmentPage > 0) setAppointmentPage(p => p - 1);
+                }}
+            />
+            <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.brown,
+                  borderRadius: 999,
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                }}
+            >
+              <Text style={{ fontSize: 16, color: theme.brown }}>{appointmentPage + 1}</Text>
+            </View>
+            <AntDesign
+                name="right"
+                size={20}
+                color={(appointmentPage + 1) * ITEMS_PER_PAGE < appointments.length ? theme.brown : '#ccc'}
+                onPress={() => {
+                  if ((appointmentPage + 1) * ITEMS_PER_PAGE < appointments.length) {
+                    setAppointmentPage(p => p + 1);
+                  }
+                }}
+            />
+          </View>
+        </View>
+
+
       </ScrollView>
   );
 };
