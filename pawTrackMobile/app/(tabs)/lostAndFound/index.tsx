@@ -6,12 +6,14 @@ import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserProfile } from '@/src/User';
 import CountiesDropdownModal from '@/components/atoms/CountiesDropdownModal';
+import { router } from 'expo-router';
+import { getPets, Pet } from '@/src/Pets';
 
 const LostAndFoundScreen = () => {
 
   const theme = getTheme();
   const [countiesDropdownVisible, setCountiesDropdownVisible] = useState<boolean>(false);
-  const [countySelected, setCountySelected] = useState<string>()
+  const [countySelected, setCountySelected] = useState<string>();
 
   const setInitialData = async () => {
     const id = await AsyncStorage.getItem('userId');
@@ -27,8 +29,10 @@ const LostAndFoundScreen = () => {
   }, [])
 
   const addPost = () => {
+    router.replace("/(tabs)/lostAndFound/add" as any);
+  };
 
-  }
+
 
   return (
     <View style={styles.main}>

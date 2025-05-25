@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Text, TouchableOpacity, StyleSheet, Alert, Image, View } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TextMedium } from '@/components/StyledText';
 
-const ImageUploader = ({ onImageSelected }: { onImageSelected: (uri: string) => void }) => {
+const ImageUploader = ({ onImageSelected, aspect1 = 1, aspect2 = 1 }: { onImageSelected: (uri: string) => void, aspect1?: number, aspect2?: number }) => {
   const [previewUri, setPreviewUri] = useState<string | null>(null);
 
   const handlePickImage = async () => {
@@ -12,7 +12,7 @@ const ImageUploader = ({ onImageSelected }: { onImageSelected: (uri: string) => 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
         allowsEditing: true,
-        aspect: [1, 1],
+        aspect: [aspect1, aspect2],
         quality: 0.7,
       });
 

@@ -48,7 +48,7 @@ const SignUpScreen =()  => {
       
       return await signUp(data.firstName, data.lastName, Number(data.age), data.county, data.email, data.password, pictureUrl ?? null);
     } catch (err) {
-      console.log("[handleRegister] ==>", err);
+      console.log("Error: ", err);
       return null;
     }
   }
