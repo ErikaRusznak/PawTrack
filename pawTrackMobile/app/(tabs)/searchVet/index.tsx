@@ -3,22 +3,26 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Text, View } from '@/components/Themed';
 import { getUserProfile } from '@/src/User';
-import {fetchNearbyVets, geocodeCounty} from '@/google-maps/google-maps-service';
+import {fetchNearbyVets, geocodeCounty, fetchVetDetails} from '@/google-maps/google-maps-service';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import { Callout } from 'react-native-maps';
+import { Linking } from 'react-native';
 
 const SearchVetScreen = () => {
 
   const [vets, setVets] = useState([]);
   const [region, setRegion] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [selectedVetId, setSelectedVetId] = useState<string | null>(null);
+  const [selectedVetPhone, setSelectedVetPhone] = useState<string | null>(null);
 
   useEffect(() => {
     const loadVets = async () => {
       try {
         const id = await AsyncStorage.getItem('userId');
         if (!id) throw new Error('User ID not found in storage');
-        const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
+
         const profile = await getUserProfile(id);
         const county = profile.county
 
@@ -69,9 +73,49 @@ const SearchVetScreen = () => {
                   latitude: vet.geometry.location.lat,
                   longitude: vet.geometry.location.lng,
                 }}
-                title={vet.name}
-                description={vet.vicinity}
-            />
+            >
+              <Callout
+                  onPress={async () => {
+                    setSelectedVetId(vet.place_id);
+                    setSelectedVetPhone(null);
+
+                    try {
+                      const phone = await fetchVetDetails(vet.place_id);
+                      if (phone) {
+                        setSelectedVetPhone(phone);
+                        const url = `tel:${phone}`;
+                        const supported = await Linking.canOpenURL(url);
+                        if (supported) {
+                          Linking.openURL(url);
+                        } else {
+                          Toast.show({ type: 'error', text1: 'Calling not supported on this device.' });
+                        }
+                      } else {
+                        Toast.show({ type: 'info', text1: 'Phone number not available' });
+                      }
+                    } catch (error) {
+                      Toast.show({ type: 'error', text1: 'Error fetching phone number' });
+                    }
+                  }}
+              >
+                <View style={{ width: 200 }}>
+                  <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{vet.name}</Text>
+                  <Text style={{ marginVertical: 4 }}>{vet.vicinity}</Text>
+                  {selectedVetId === vet.place_id ? (
+                      selectedVetPhone ? (
+                          <Text style={{ color: 'blue', fontWeight: 'bold' }}>📞 Call: {selectedVetPhone}</Text>
+                      ) : (
+                          <Text style={{ color: 'gray' }}>Fetching phone...</Text>
+                      )
+                  ) : (
+                      <Text style={{ color: 'gray' }}>Tap for calling</Text>
+                  )}
+                </View>
+              </Callout>
+            </Marker>
+
+
+
         ))}
       </MapView>
   );
