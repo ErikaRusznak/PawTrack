@@ -5,6 +5,7 @@ import Feather from '@expo/vector-icons/build/Feather';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserProfile } from '@/src/User';
+import CountiesDropdownModal from '@/components/atoms/CountiesDropdownModal';
 
 const LostAndFoundScreen = () => {
 
@@ -23,7 +24,7 @@ const LostAndFoundScreen = () => {
 
   useEffect(() => {
     setInitialData();
-  })
+  }, [])
 
   const addPost = () => {
 
@@ -39,7 +40,11 @@ const LostAndFoundScreen = () => {
         <TouchableOpacity onPress={addPost} style={styles.addPostButton}>
           <TextMedium style={styles.addPostText}>Add post</TextMedium>
         </TouchableOpacity>
-
+        <CountiesDropdownModal
+          visible={countiesDropdownVisible}
+          onClose={() => setCountiesDropdownVisible(false)}
+          onSelect={(county) => setCountySelected(county)}
+        />
       </View>
       <View>
 
@@ -88,6 +93,7 @@ const styles = StyleSheet.create({
     color: "#f2f6d0",
     fontSize: 20,
   },
+
 });
 
 export default LostAndFoundScreen;
