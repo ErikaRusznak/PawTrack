@@ -55,7 +55,7 @@ const ProfileInfo = () => {
                 <View style={styles.infoRow}>
                     <MaterialCommunityIcons name="calendar" size={20} color="black" />
                     <TextMedium style={styles.infoText}>
-                        {user?.age} ani
+                        {user?.age} years old
                     </TextMedium>
                 </View>
                 <View style={styles.infoRow}>
@@ -81,33 +81,35 @@ const ProfileInfo = () => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         alignItems: 'center',
-        gap: 8,
+        justifyContent: 'center',
+        gap: 32,
     },
     avatar: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        marginBottom: 10,
+        width: 150,
+        height: 150,
+        borderRadius: 80,
+        marginBottom: 22,
     },
     infoBlock: {
-        gap: 8,
-        marginVertical: 12,
+        gap: 16,
+        marginVertical: 16,
     },
     infoRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 12,
     },
     infoText: {
         fontSize: 16,
     },
     logoutButton: {
         backgroundColor: '#d98324',
-        padding: 14,
+        padding: 16,
         borderRadius: 8,
         alignItems: 'center',
-        marginTop: 24,
+        marginTop: 32,
         width: '100%',
     },
     logoutText: {
