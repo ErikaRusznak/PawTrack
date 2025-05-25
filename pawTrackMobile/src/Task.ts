@@ -39,3 +39,21 @@ export const getTasksForPets = async (petIds: string[], date: Date): Promise<Tas
     return [];
   }
 };
+
+export const getTasksByPetId = async (petId: string) => {
+    const taskRef = collection(db, TABLE_NAME);
+
+    try {
+        const tasksQuery = query(
+            taskRef,
+            where("petId", "==", petId),
+            orderBy('taskDate', 'desc')
+        );
+        const snapshot = await getDocs(tasksQuery);
+        return snapshot.docs.map((doc) => doc.data() as Task);
+    } catch (err) {
+        console.error("Error fetching tasks:", err);
+        return [];
+    }
+};
+

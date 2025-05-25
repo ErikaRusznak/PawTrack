@@ -139,7 +139,7 @@ const TabLayout = () => {
           animation: 'fade',
           headerTitleAlign: 'left',
           headerLeft: () => <BackIcon backPage='/(tabs)/pets' />,
-          headerTitle: () => <HeaderText text={'Details About Pet'} />,
+          headerTitle: () => <HeaderText text={'Pet Details'} />,
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
       />
