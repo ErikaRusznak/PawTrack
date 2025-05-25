@@ -19,7 +19,7 @@ export const addUserProfile = async (uid: string, firstName: string, lastName: s
     await setDoc(doc(db, TABLE_NAME, uid), userData);
 }
 
-const getUserProfile = async (uid: string) => {
+export const getUserProfile = async (uid: string) => {
   const userDoc = await getDoc(doc(db, TABLE_NAME, uid));
   if (userDoc.exists()) {
     return userDoc.data();

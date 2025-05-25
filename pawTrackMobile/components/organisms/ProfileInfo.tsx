@@ -2,11 +2,11 @@ import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { TextBold, TextMedium } from '@/components/StyledText';
 import { useSession } from '@/context/AuthContext';
 import { getTheme } from '@/components/Themed';
-import { getUserProfile } from '@/src/User';
 import { FontAwesome5, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUserProfile } from '@/src/User';
 
 const ProfileInfo = () => {
     const theme = getTheme();
