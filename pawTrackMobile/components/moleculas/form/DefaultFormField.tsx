@@ -32,8 +32,8 @@ const DefaultFormField = ({ control, errors, keyboardType = 'default', label, co
             keyboardType={keyboardType}
             autoCapitalize='none'
             secureTextEntry={secureTextEntry}
-            multiline={true}
-            numberOfLines={4}
+            multiline={!secureTextEntry}
+            numberOfLines={secureTextEntry ? 1 : 4}
             blurOnSubmit={true}
             returnKeyType="done"
           />)}

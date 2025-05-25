@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/firebaseConfig";
 import { login, logout, register } from "@/firebase/firebaseService";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthContextType {
   signIn: (email: string, password: string) => Promise<User | undefined>;
@@ -43,6 +44,9 @@ export const SessionProvider = (props: { children: React.ReactNode }) => {
   const handleSignIn = async (email: string, password: string) => {
     try {
       const response = await login(email, password);
+      if (response?.user?.uid) {
+        await AsyncStorage.setItem('userId', response.user.uid);
+      }
       return response?.user;
     } catch (error) {
       console.error("[handleSignIn error] ==>", error);
