@@ -264,13 +264,13 @@ const styles = StyleSheet.create({
   },
   modalHeader: {
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
   },
   modalPetImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginRight: 12,
   },
   modalTaskTitle: {
     fontSize: 24,
