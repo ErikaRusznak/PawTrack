@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { addPost, Post } from '@/src/LostAndFoundPost';
 import Toast from 'react-native-toast-message';
 import { router } from 'expo-router';
+import { getUserProfile } from '@/src/User';
+import { removeDiacritics } from '@/util/HelperFunctions';
 
 type LostAndFoundPostFormProps = {
     buttonText: string;
@@ -32,6 +34,7 @@ const LostAndFoundPostForm = ({ buttonText, pets }: LostAndFoundPostFormProps) =
     const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
     const [petDropdownOpen, setPetDropdownOpen] = useState(false);
     const [petDropdownValue, setPetDropdownValue] = useState(null);
+    const [resetKey, setResetKey] = useState(0);
 
     const petItems = pets?.map((pet) => ({ label: pet.name, value: pet.id }));
 
@@ -50,10 +53,17 @@ const LostAndFoundPostForm = ({ buttonText, pets }: LostAndFoundPostFormProps) =
             const userId = await AsyncStorage.getItem('userId');
             if (!userId) throw new Error('User ID not found in storage');
 
+            const profile = await getUserProfile(userId);
+            if (!profile) throw new Error('User profile not found');
+
             const postToSave: Post = {
                 ...data,
                 userId: userId,
                 picture: pictureUrl,
+                userPicture: profile.picture,
+                userFirstName: profile.firstName,
+                userLastName: profile.lastName,
+                county: removeDiacritics(data.county),
             };
             await updatePetFoundStatus(data.petId, false);
             await addPost(postToSave);
@@ -70,6 +80,7 @@ const LostAndFoundPostForm = ({ buttonText, pets }: LostAndFoundPostFormProps) =
         reset();
         setDropdownValue(null);
         setPetDropdownValue(null);
+        setResetKey((k) => k + 1);
     };
 
 
@@ -153,7 +164,7 @@ const LostAndFoundPostForm = ({ buttonText, pets }: LostAndFoundPostFormProps) =
                 style={styles.textarea}
             />
 
-            <ImageUploader onImageSelected={(uri) => setSelectedImageUri(uri)} aspect1={16} aspect2={9} />
+            <ImageUploader onImageSelected={(uri) => setSelectedImageUri(uri)} aspect1={16} aspect2={9} resetKey={resetKey} />
 
             <TouchableOpacity
                 onPress={handleSubmit(onSubmitHandler)}

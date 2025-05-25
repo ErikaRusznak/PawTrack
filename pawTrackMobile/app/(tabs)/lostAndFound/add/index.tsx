@@ -1,13 +1,7 @@
 import { View } from '@/components/Themed';
-import Toast from 'react-native-toast-message';
 import { useRouter } from 'expo-router';
-import PetForm from '@/components/organisms/PetForm';
-import { addPet, getPets, Pet } from '@/src/Pets';
+import { getPets, Pet } from '@/src/Pets';
 import { StyleSheet } from 'react-native';
-import uuid from 'react-native-uuid';
-import { storage } from '@/firebase/firebaseConfig';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import LostAndFoundPostForm from '@/components/organisms/LostAndFoundPostForm';
 import { useEffect, useState } from 'react';
 

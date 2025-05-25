@@ -20,7 +20,6 @@ const AddTaskScreen = () => {
   }, []);
 
   const handleAddTask = async (data: any) => {
-    console.log('Adding task:', data);
     try {
       const taskToSave: Task = {
         ...data,

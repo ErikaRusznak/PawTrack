@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TextMedium } from '@/components/StyledText';
 
-const ImageUploader = ({ onImageSelected, aspect1 = 1, aspect2 = 1 }: { onImageSelected: (uri: string) => void, aspect1?: number, aspect2?: number }) => {
+const ImageUploader = ({ onImageSelected, aspect1 = 1, aspect2 = 1, resetKey }: { onImageSelected: (uri: string) => void, aspect1?: number, aspect2?: number, resetKey?: number }) => {
   const [previewUri, setPreviewUri] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPreviewUri(null);
+  }, [resetKey]);
 
   const handlePickImage = async () => {
     try {

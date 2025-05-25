@@ -1,5 +1,5 @@
-import { Modal, StyleSheet, TouchableOpacity } from 'react-native';
-import { getTheme, Text, View } from '@/components/Themed';
+import { StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { getTheme, View } from '@/components/Themed';
 import { TextMedium, TextRegular } from '@/components/StyledText';
 import Feather from '@expo/vector-icons/build/Feather';
 import { useEffect, useState } from 'react';
@@ -7,13 +7,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserProfile } from '@/src/User';
 import CountiesDropdownModal from '@/components/atoms/CountiesDropdownModal';
 import { router } from 'expo-router';
-import { getPets, Pet } from '@/src/Pets';
+import LostAndFoundPostCard from '@/components/organisms/LostAndFoundPostCard';
+import { Post, getPosts } from '@/src/LostAndFoundPost';
 
 const LostAndFoundScreen = () => {
 
   const theme = getTheme();
   const [countiesDropdownVisible, setCountiesDropdownVisible] = useState<boolean>(false);
   const [countySelected, setCountySelected] = useState<string>();
+  const [posts, setPosts] = useState<Post[]>([]);
 
   const setInitialData = async () => {
     const id = await AsyncStorage.getItem('userId');
@@ -24,9 +26,18 @@ const LostAndFoundScreen = () => {
     setCountySelected(profile.county);
   }
 
+  const fetchPosts = async () => {
+    const postsData = await getPosts(countySelected);
+    setPosts(postsData);
+  };
+
   useEffect(() => {
     setInitialData();
   }, [])
+
+  useEffect(() => {
+    if (countySelected) fetchPosts();
+  }, [countySelected])
 
   const addPost = () => {
     router.replace("/(tabs)/lostAndFound/add" as any);
@@ -51,7 +62,16 @@ const LostAndFoundScreen = () => {
         />
       </View>
       <View>
-
+        <FlatList
+          data={posts}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <LostAndFoundPostCard
+              post={item}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
     </View>
   );

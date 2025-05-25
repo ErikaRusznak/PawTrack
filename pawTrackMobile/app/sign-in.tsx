@@ -20,7 +20,7 @@ const SignInScreen = () => {
     try {
       return await signIn(data.email, data.password);
     } catch (err) {
-      console.log("[handleLogin] ==>", err);
+      console.log("Error: ", err);
       return null;
     }
   }

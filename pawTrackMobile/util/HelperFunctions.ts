@@ -30,3 +30,26 @@ export const formatTaskDate = (task: Task) => {
     day: 'numeric'
   });
 };
+
+export const removeDiacritics = (str: string): string => {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+};
+
+export const formatDate = (date: Date) => {
+  if (!date) return 'Invalid date';
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+export const formatTime = (date: Date) => {
+  if (!date) return 'Invalid date';
+  const timeStr = date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  return `${timeStr}`;
+}
