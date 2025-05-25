@@ -1,8 +1,8 @@
-import { addDoc, collection, deleteDoc, doc, DocumentData, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, DocumentData, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc, where } from 'firebase/firestore';
 import { db } from "../firebase/firebaseConfig";
 
 const TABLE_NAME = 'pet';
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 6;
 
 export type Pet = {
     id: string;
@@ -65,6 +65,10 @@ export const deletePet = async (petId: string) => {
   await deleteDoc(ref);
 };
 
-export const getPetCountForUserId = async (userId: string) => {
-  // implement
-}
+export const getPetsForUser = async (userId: string): Promise<Pet[]> => {
+  const petRef = collection(db, TABLE_NAME);
+  const petsQuery = query(petRef, where("userId", "==", userId));
+  const snapshot = await getDocs(petsQuery);
+  return snapshot.docs.map((doc) => doc.data() as Pet).sort((a, b) => a.name.localeCompare(b.name));
+};
+

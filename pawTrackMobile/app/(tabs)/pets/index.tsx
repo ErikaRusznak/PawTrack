@@ -1,69 +1,40 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { View } from '@/components/Themed';
 import PetCard from '@/components/moleculas/pets/PetCard';
 import { TextMedium } from '@/components/StyledText';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { deletePet, getPets, Pet, updatePetFoundStatus } from '@/src/Pets';
-import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
-import Pagination from '@/components/atoms/Pagination';
+import React, { useEffect, useState, useCallback } from 'react';
+import { deletePet, getPetsForUser, Pet, updatePetFoundStatus } from '@/src/Pets';
 import PetActionsPopup from '@/components/moleculas/pets/PetActionsPopup';
+import { useFocusEffect } from '@react-navigation/native';
 
 const PetsScreen = () => {
-
   const router = useRouter();
   const addPet = () => {
     router.replace("/(tabs)/pets/add");
   };
 
   const [pets, setPets] = useState<Pet[]>([]);
-  const [lastDocs, setLastDocs] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const loadPets = async (direction: 'next' | 'previous') => {
-    let page = currentPage;
-    let cursor: QueryDocumentSnapshot<DocumentData> | undefined;
-
-    if (direction === 'next') {
-      cursor = lastDocs[page - 1];
-      page += 1;
-    } else if (direction === 'previous') {
-      page -= 1;
-      cursor = page === 1 ? undefined : lastDocs[page - 2];
-    }
-
-    const { pets: newPets, lastDoc, hasMore } = await getPets(cursor);
-
-    setPets(newPets);
-    setHasNextPage(hasMore);
-    if (direction === 'next') {
-      setLastDocs((prev) => {
-        const updated = [...prev];
-        updated[page - 1] = lastDoc!;
-        return updated;
-      });
-    }
-    setCurrentPage(page);
-  };
-
+  const getPets = async () => {
+      const id = await AsyncStorage.getItem('userId');
+      setUserId(id);
+      if (!id) return;
+      const petsForUser = await getPetsForUser(id);
+      setPets(petsForUser);
+  }
 
   useEffect(() => {
-    (async () => {
-      const { pets: initialPets, lastDoc } = await getPets();
-      setPets(initialPets);
-      setLastDocs([lastDoc!]);
-    })();
+    getPets();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const { pets: initialPets, lastDoc } = await getPets();
-      setPets(initialPets);
-      setLastDocs([lastDoc!]);
-    })();
-  }, [pets]);
-
+  useFocusEffect(
+    useCallback(() => {
+      getPets();
+    }, [])
+  );
 
   // pop up
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
@@ -75,15 +46,17 @@ const PetsScreen = () => {
   };
 
   const handleMarkAsFound = async (petId: string) => {
+    if (!userId) return;
     await updatePetFoundStatus(petId, true);
-    const { pets: updatedPets } = await getPets(lastDocs[currentPage - 1]);
-    setPets(updatedPets);
+    const petsForUser = await getPetsForUser(userId);
+    setPets(petsForUser);
   };
 
   const handleDelete = async (petId: string) => {
+    if (!userId) return;
     await deletePet(petId);
-    const { pets: updatedPets } = await getPets(lastDocs[currentPage - 1]);
-    setPets(updatedPets);
+    const petsForUser = await getPetsForUser(userId);
+    setPets(petsForUser);
   };
 
   return (
@@ -95,20 +68,12 @@ const PetsScreen = () => {
             <TextMedium style={styles.addPetText}>Add pet</TextMedium>
           </TouchableOpacity>
         </View>
-        <View style={styles.petCards}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.petCards}>
           {pets.map((pet) => (
             <PetCard key={pet.id} pet={pet} onOptionsPress={() => handleOptions(pet)} />
           ))}
-        </View>
-        <Pagination
-          currentPage={currentPage}
-          onPrevious={() => loadPets('previous')}
-          onNext={() => loadPets('next')}
-          disablePrevious={currentPage === 1}
-          disableNext={!hasNextPage}
-        />
+        </ScrollView>
       </View>
-
       {selectedPet && (
         <PetActionsPopup
           visible={popupVisible}
@@ -119,7 +84,6 @@ const PetsScreen = () => {
         />
       )}
     </>
-
   );
 };
 
@@ -141,6 +105,7 @@ const styles = StyleSheet.create({
   petCards: {
     flexDirection: "column",
     gap: 20,
+    paddingBottom: 20,
   },
   addPetButton: {
     backgroundColor: "#d98324",
