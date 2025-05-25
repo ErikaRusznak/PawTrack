@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   addPetText: {
     color: "#f2f6d0",
-    fontSize: 24,
+    fontSize: 20,
   },
 });
 

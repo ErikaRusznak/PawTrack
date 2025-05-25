@@ -23,7 +23,7 @@ const taskTitles = [
 
 type TaskFormProps = {
     onSubmit: (data: any) => Promise<void>;
-    pets: Pet[];
+    pets: Pet[] | [];
 };
 
 const TaskForm = ({ onSubmit, pets }: TaskFormProps) => {

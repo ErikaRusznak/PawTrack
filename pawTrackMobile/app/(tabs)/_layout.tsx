@@ -143,6 +143,17 @@ const TabLayout = () => {
           headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
       />
+      <Tabs.Screen
+        name="lostAndFound/add/index"
+        options={{
+          href: null,
+          animation: 'fade',
+          headerTitleAlign: 'left',
+          headerLeft: () => <BackIcon backPage='/(tabs)/lostAndFound' />,
+          headerTitle: () => <HeaderText text={'Lost&Found'} />,
+          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
+        }}
+      />
     </Tabs>
   );
 }

@@ -11,8 +11,8 @@ import { Linking } from 'react-native';
 
 const SearchVetScreen = () => {
 
-  const [vets, setVets] = useState([]);
-  const [region, setRegion] = useState(null);
+  const [vets, setVets] = useState<any>([]);
+  const [region, setRegion] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedVetId, setSelectedVetId] = useState<string | null>(null);
   const [selectedVetPhone, setSelectedVetPhone] = useState<string | null>(null);
@@ -24,7 +24,8 @@ const SearchVetScreen = () => {
         if (!id) throw new Error('User ID not found in storage');
 
         const profile = await getUserProfile(id);
-        const county = profile.county
+        if(!profile) return;
+        const county = profile.county;
 
         const { lat, lng } = await geocodeCounty(county)
 

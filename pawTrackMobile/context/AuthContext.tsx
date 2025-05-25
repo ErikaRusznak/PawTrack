@@ -49,7 +49,7 @@ export const SessionProvider = (props: { children: React.ReactNode }) => {
       }
       return response?.user;
     } catch (error) {
-      console.error("[handleSignIn error] ==>", error);
+      console.error("Error: ", error);
       return undefined;
     }
   };
@@ -67,7 +67,7 @@ export const SessionProvider = (props: { children: React.ReactNode }) => {
       const response = await register(firstName, lastName, age, county, email, password, picture);
       return response?.user;
     } catch (error) {
-      console.error("[handleSignUp error] ==>", error);
+      console.error("Error: ", error);
       return undefined;
     }
   };
