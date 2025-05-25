@@ -72,3 +72,8 @@ export const getPetsForUser = async (userId: string): Promise<Pet[]> => {
   return snapshot.docs.map((doc) => doc.data() as Pet).sort((a, b) => a.name.localeCompare(b.name));
 };
 
+export const countPetsForUser = async (userId: string): Promise<number> => {
+  const petsForUser = await getPetsForUser(userId);
+  return petsForUser.length;
+}
+

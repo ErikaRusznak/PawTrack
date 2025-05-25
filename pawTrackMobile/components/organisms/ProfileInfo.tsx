@@ -7,11 +7,13 @@ import { useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserProfile } from '@/src/User';
+import {countPetsForUser} from "@/src/Pets";
 
 const ProfileInfo = () => {
     const theme = getTheme();
     const { signOut } = useSession();
     const [user, setUser] = useState<any>(null);
+    const [petsCount, setPetsCount] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -23,6 +25,11 @@ const ProfileInfo = () => {
                 if (!profile) throw new Error('User profile not found');
 
                 setUser(profile);
+
+                const petsCount = await countPetsForUser(id);
+                if (!petsCount) throw new Error('Pets count not found');
+
+                setPetsCount(petsCount);
             } catch (e) {
                 Toast.show({ type: 'error', text1: 'Failed to load profile' });
                 console.error(e);
@@ -60,7 +67,7 @@ const ProfileInfo = () => {
                 <View style={styles.infoRow}>
                     <FontAwesome5 name="paw" size={18} color="black" />
                     <TextMedium style={styles.infoText}>
-                        2 animals
+                        {petsCount} animals
                     </TextMedium>
                 </View>
             </View>
