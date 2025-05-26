@@ -1,9 +1,9 @@
-import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { TextBold, TextMedium } from '@/components/StyledText';
+import {View, Image, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
+import { TextMedium } from '@/components/StyledText';
 import { useSession } from '@/context/AuthContext';
-import { getTheme } from '@/components/Themed';
+import {getTheme, Text} from '@/components/Themed';
 import { FontAwesome5, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserProfile } from '@/src/User';
@@ -13,6 +13,8 @@ const ProfileInfo = () => {
     const theme = getTheme();
     const { signOut } = useSession();
     const [user, setUser] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [imageLoading, setImageLoading] = useState(true);
     const [petsCount, setPetsCount] = useState<number | null>(null);
 
     useEffect(() => {
@@ -33,17 +35,42 @@ const ProfileInfo = () => {
             } catch (e) {
                 Toast.show({ type: 'error', text1: 'Failed to load profile' });
                 console.error(e);
+            } finally {
+                setLoading(false);
             }
         };
 
         void fetchUserProfile();
     }, []);
 
+    if (loading) {
+        return (
+            <View style={styles.center}>
+                <ActivityIndicator size="large" color={theme.orange} />
+                <Text>Loading profile...</Text>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             {user?.picture && (
-                <Image source={{ uri: user.picture }} style={styles.avatar} />
+                <View style={{ position: 'relative' }}>
+                    {imageLoading && (
+                        <ActivityIndicator
+                            size="small"
+                            color={theme.orange}
+                            style={{ position: 'absolute', top: '40%', left: '20%', zIndex: 1 }}
+                        />
+                    )}
+                    <Image
+                        source={{ uri: user.picture }}
+                        style={styles.avatar}
+                        onLoad={() => setImageLoading(false)}
+                    />
+                </View>
             )}
+
 
             <View style={styles.infoBlock}>
                 <View style={styles.infoRow}>
@@ -85,6 +112,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 32,
+    },
+    center: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     avatar: {
         width: 150,

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import {StyleSheet, TouchableOpacity, ScrollView, Text} from 'react-native';
 import { View } from '@/components/Themed';
 import PetCard from '@/components/moleculas/pets/PetCard';
 import { TextMedium } from '@/components/StyledText';
@@ -69,6 +69,9 @@ const PetsScreen = () => {
           </TouchableOpacity>
         </View>
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.petCards}>
+          {pets.length === 0 && (
+              <Text style={styles.noPets}>No pets.</Text>
+          )}
           {pets.map((pet) => (
             <PetCard key={pet.id} pet={pet} onOptionsPress={() => handleOptions(pet)} />
           ))}
@@ -122,6 +125,12 @@ const styles = StyleSheet.create({
   addPetText: {
     color: "#f2f6d0",
     fontSize: 20,
+  },
+  noPets: {
+    textAlign: 'center',
+    color: '#999',
+    fontSize: 18,
+    marginTop: 4,
   },
 });
 

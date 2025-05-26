@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, StyleSheet, TouchableOpacity, ScrollView, Text, Image, Modal } from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ScrollView, Text, Image, Modal, ActivityIndicator} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import CustomCalendar from '@/components/atoms/CustomCalendar';
 import { getPetsForUser, Pet } from '@/src/Pets';
@@ -15,6 +15,9 @@ const HomeScreen = () => {
   const theme = getTheme();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [imageLoadingStates, setImageLoadingStates] = useState<Record<string, boolean>>({});
+  const [isModalImageLoading, setIsModalImageLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -22,22 +25,37 @@ const HomeScreen = () => {
   const screenWidth = Dimensions.get('window').width;
 
   const getTasks = async () => {
-    const userId = await AsyncStorage.getItem('userId');
-    if (!userId) return;
-    const petsForUser = await getPetsForUser(userId);
-    setPets(petsForUser);
-    if (petsForUser.length > 0) {
-      const petIds = petsForUser.map(p => p.id);
-      const tasksForPets = await getTasksForPets(petIds, selectedDate);
-      setTasks(tasksForPets);
-    } else {
-      setTasks([]);
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) return;
+      const petsForUser = await getPetsForUser(userId);
+      setPets(petsForUser);
+      if (petsForUser.length > 0) {
+        const petIds = petsForUser.map(p => p.id);
+        const tasksForPets = await getTasksForPets(petIds, selectedDate);
+        setTasks(tasksForPets);
+      } else {
+        setTasks([]);
+      }
+    } catch (error) {
+      console.error('Error loading vets:', error);
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     getTasks();
   }, [selectedDate]);
+
+  if (loading) {
+    return (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color={theme.orange} />
+          <Text>Loading tasks...</Text>
+        </View>
+    );
+  }
 
   const handleDateSelect = (day: any) => {
     setSelectedDate(new Date(day.dateString));
@@ -95,8 +113,25 @@ const HomeScreen = () => {
                   <TextRegular style={styles.taskTime}>{formatTaskTime(task)}</TextRegular>
                 </View>
                 {pet?.picture && (
-                  <Image source={{ uri: pet.picture }} style={styles.petImage} />
+                    <View style={{ position: 'relative', width: 70, height: 70 }}>
+                      {imageLoadingStates[task.id] && (
+                          <View style={styles.imageLoader}>
+                            <ActivityIndicator size="small" color={theme.orange} />
+                          </View>
+                      )}
+                      <Image
+                          source={{ uri: pet.picture }}
+                          style={styles.petImage}
+                          onLoadStart={() =>
+                              setImageLoadingStates(prev => ({ ...prev, [task.id]: true }))
+                          }
+                          onLoadEnd={() =>
+                              setImageLoadingStates(prev => ({ ...prev, [task.id]: false }))
+                          }
+                      />
+                    </View>
                 )}
+
               </View>
             </TouchableOpacity>
           );
@@ -115,27 +150,41 @@ const HomeScreen = () => {
           >
             <View style={[styles.taskModal, { width: screenWidth * 0.8 }]}>
               {selectedTask && (
-                <>
-                  <View style={styles.modalHeader}>
-                    {(() => {
-                      const petPicture = pets.find(p => p.id === selectedTask.petId)?.picture;
-                      return petPicture ? (
-                        <Image source={{ uri: petPicture }} style={styles.modalPetImage} />
-                      ) : null;
-                    })()}
-                    <TextSemiBold style={styles.modalTaskTitle}>{selectedTask.taskTitle}</TextSemiBold>
-                  </View>
-                  <View style={styles.modalContent}>
-                    <TextSemiBold style={styles.modalLabel}>Date:</TextSemiBold>
-                    <TextRegular style={styles.modalValue}>{formatTaskDate(selectedTask)}</TextRegular>
+                  <>
+                    <View style={styles.modalHeader}>
+                      {(() => {
+                        const petPicture = pets.find(p => p.id === selectedTask.petId)?.picture;
 
-                    <TextSemiBold style={styles.modalLabel}>Hours:</TextSemiBold>
-                    <TextRegular style={styles.modalValue}>{formatTaskTime(selectedTask)}</TextRegular>
+                        return petPicture ? (
+                            <View style={{ position: 'relative', width: 80, height: 80 }}>
+                              {isModalImageLoading && (
+                                  <View style={styles.modalImageLoader}>
+                                    <ActivityIndicator size="small" color={theme.orange} />
+                                  </View>
+                              )}
+                              <Image
+                                  source={{ uri: petPicture }}
+                                  style={styles.modalPetImage}
+                                  onLoadStart={() => setIsModalImageLoading(true)}
+                                  onLoadEnd={() => setIsModalImageLoading(false)}
+                              />
+                            </View>
+                        ) : null;
+                      })()}
+                      <TextSemiBold style={styles.modalTaskTitle}>{selectedTask.taskTitle}</TextSemiBold>
+                    </View>
 
-                    <TextSemiBold style={styles.modalLabel}>Details:</TextSemiBold>
-                    <TextRegular style={styles.modalValue}>{selectedTask.details}</TextRegular>
-                  </View>
-                </>
+                    <View style={styles.modalContent}>
+                      <TextSemiBold style={styles.modalLabel}>Date:</TextSemiBold>
+                      <TextRegular style={styles.modalValue}>{formatTaskDate(selectedTask)}</TextRegular>
+
+                      <TextSemiBold style={styles.modalLabel}>Hours:</TextSemiBold>
+                      <TextRegular style={styles.modalValue}>{formatTaskTime(selectedTask)}</TextRegular>
+
+                      <TextSemiBold style={styles.modalLabel}>Details:</TextSemiBold>
+                      <TextRegular style={styles.modalValue}>{selectedTask.details}</TextRegular>
+                    </View>
+                  </>
               )}
             </View>
           </TouchableOpacity>
@@ -151,6 +200,31 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     gap: 10,
+  },
+  imageLoader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 70,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  modalImageLoader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 80,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   dateRow: {
     marginTop: 10,
@@ -246,6 +320,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
+    marginTop: 20,
     color: '#443627',
   },
   modalContent: {

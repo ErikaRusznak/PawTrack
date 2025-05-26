@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import {View, Image, TouchableOpacity, StyleSheet, Animated, ActivityIndicator} from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import { Post } from '@/src/LostAndFoundPost';
 import { formatDate, formatTime } from '@/util/HelperFunctions';
 import { TextMedium, TextRegular, TextSemiBold } from '../StyledText';
+import {getTheme} from "@/components/Themed";
 
 
 type LostAndFoundPostCardProps = {
@@ -11,16 +12,25 @@ type LostAndFoundPostCardProps = {
 }
 
 const LostAndFoundPostCard = ({ post } : LostAndFoundPostCardProps) => {
+  const theme = getTheme();
   const [expanded, setExpanded] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [postImageLoading, setPostImageLoading] = useState(false);
 
   return (
     <View style={styles.card}>
       {/* Header */}
       <View style={styles.headerRow}>
-        <Image
-          source={post.userPicture ? { uri: post.userPicture } : require('@/assets/images/icon.png')}
-          style={styles.avatar}
-        />
+        <View style={styles.avatarWrapper}>
+          {avatarLoading && <ActivityIndicator style={styles.avatarLoader} size="small" color={theme.orange} />}
+          <Image
+              source={post.userPicture ? { uri: post.userPicture } : require('@/assets/images/icon.png')}
+              style={styles.avatar}
+              onLoadStart={() => setAvatarLoading(true)}
+              onLoadEnd={() => setAvatarLoading(false)}
+          />
+        </View>
+
         <View style={{ flex: 1 }}>
           <TextMedium style={styles.name}>{post.userFirstName} {post.userLastName}</TextMedium>
           <TextRegular style={styles.date}>{formatDate(post.createdAt)} {formatTime(post.createdAt)}</TextRegular>
@@ -30,8 +40,20 @@ const LostAndFoundPostCard = ({ post } : LostAndFoundPostCardProps) => {
         </View>
       </View>
       {post.picture && (
-        <Image source={{ uri: post.picture }} style={styles.postImage} resizeMode="cover" />
+          <View style={styles.postImageWrapper}>
+            {postImageLoading && (
+                <ActivityIndicator style={styles.imageLoader} size="large" color="#d98324" />
+            )}
+            <Image
+                source={{ uri: post.picture }}
+                style={styles.postImage}
+                resizeMode="cover"
+                onLoadStart={() => setPostImageLoading(true)}
+                onLoadEnd={() => setPostImageLoading(false)}
+            />
+          </View>
       )}
+
       <TouchableOpacity
         style={styles.titleRow}
         onPress={() => setExpanded((e) => !e)}
@@ -61,6 +83,32 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginHorizontal: 1,
   },
+  avatarWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
+  avatarLoader: {
+    position: 'absolute',
+    zIndex: 1,
+  },
+  postImageWrapper: {
+    width: '100%',
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    backgroundColor: '#fff',
+  },
+  imageLoader: {
+    position: 'absolute',
+    zIndex: 1,
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -68,8 +116,8 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   avatar: {
-    width: 36,
-    height: 36,
+    width: 41,
+    height: 38,
     borderRadius: 18,
     marginRight: 10,
     backgroundColor: '#eee',

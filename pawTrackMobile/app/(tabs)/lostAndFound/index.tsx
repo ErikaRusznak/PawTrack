@@ -1,8 +1,8 @@
-import { StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { getTheme, View } from '@/components/Themed';
+import {StyleSheet, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
+import {getTheme, Text, View} from '@/components/Themed';
 import { TextMedium, TextRegular } from '@/components/StyledText';
 import Feather from '@expo/vector-icons/build/Feather';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserProfile } from '@/src/User';
 import CountiesDropdownModal from '@/components/atoms/CountiesDropdownModal';
@@ -16,6 +16,7 @@ const LostAndFoundScreen = () => {
   const [countiesDropdownVisible, setCountiesDropdownVisible] = useState<boolean>(false);
   const [countySelected, setCountySelected] = useState<string>();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const setInitialData = async () => {
     const id = await AsyncStorage.getItem('userId');
@@ -27,9 +28,15 @@ const LostAndFoundScreen = () => {
   }
 
   const fetchPosts = async () => {
-    const postsData = await getPosts(countySelected);
-    setPosts(postsData);
+    setLoading(true);
+    try {
+      const postsData = await getPosts(countySelected);
+      setPosts(postsData);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   useEffect(() => {
     setInitialData();
@@ -61,18 +68,30 @@ const LostAndFoundScreen = () => {
           onSelect={(county) => setCountySelected(county)}
         />
       </View>
-      <View>
-        <FlatList
-          data={posts}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <LostAndFoundPostCard
-              post={item}
-            />
-          )}
-          showsVerticalScrollIndicator={false}
-        />
+      <View style={{ flex: 1 }}>
+        {loading ? (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" color={theme.orange} />
+              <Text>Loading posts...</Text>
+            </View>
+        ) : (
+            <>
+              {posts.length === 0 && (
+                  <Text style={styles.noPosts}>No tasks in this county.</Text>
+              )}
+              <FlatList
+                  data={posts}
+                  keyExtractor={item => item.id}
+                  renderItem={({ item }) => (
+                      <LostAndFoundPostCard post={item} />
+                  )}
+                  showsVerticalScrollIndicator={false}
+              />
+            </>
+        )}
       </View>
+
+
     </View>
   );
 };
@@ -85,6 +104,12 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 16,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
   },
   filterAndAdd: {
     marginTop: 10,
@@ -117,7 +142,12 @@ const styles = StyleSheet.create({
     color: "#f2f6d0",
     fontSize: 20,
   },
-
+  noPosts: {
+    textAlign: 'center',
+    color: '#999',
+    fontSize: 18,
+    marginTop: 4,
+  },
 });
 
 export default LostAndFoundScreen;
