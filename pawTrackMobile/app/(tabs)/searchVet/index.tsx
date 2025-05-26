@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { Text, View } from '@/components/Themed';
+import {getTheme, Text, View} from '@/components/Themed';
 import { getUserProfile } from '@/src/User';
 import {fetchNearbyVets, geocodeCounty, fetchVetDetails} from '@/google-maps/google-maps-service';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,7 +10,7 @@ import { Callout } from 'react-native-maps';
 import { Linking } from 'react-native';
 
 const SearchVetScreen = () => {
-
+  const theme = getTheme();
   const [vets, setVets] = useState<any>([]);
   const [region, setRegion] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -46,12 +46,12 @@ const SearchVetScreen = () => {
     };
 
     loadVets();
-  }, []);
+   }, []);
 
   if (loading) {
     return (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color={theme.orange} />
           <Text>Loading map and nearby vets...</Text>
         </View>
     );
