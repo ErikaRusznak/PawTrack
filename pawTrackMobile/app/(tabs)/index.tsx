@@ -16,6 +16,7 @@ const HomeScreen = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageLoadingStates, setImageLoadingStates] = useState<Record<string, boolean>>({});
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -111,8 +112,25 @@ const HomeScreen = () => {
                   <TextRegular style={styles.taskTime}>{formatTaskTime(task)}</TextRegular>
                 </View>
                 {pet?.picture && (
-                  <Image source={{ uri: pet.picture }} style={styles.petImage} />
+                    <View style={{ position: 'relative', width: 70, height: 70 }}>
+                      {imageLoadingStates[task.id] && (
+                          <View style={styles.imageLoader}>
+                            <ActivityIndicator size="small" color={theme.orange} />
+                          </View>
+                      )}
+                      <Image
+                          source={{ uri: pet.picture }}
+                          style={styles.petImage}
+                          onLoadStart={() =>
+                              setImageLoadingStates(prev => ({ ...prev, [task.id]: true }))
+                          }
+                          onLoadEnd={() =>
+                              setImageLoadingStates(prev => ({ ...prev, [task.id]: false }))
+                          }
+                      />
+                    </View>
                 )}
+
               </View>
             </TouchableOpacity>
           );
@@ -167,6 +185,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     gap: 10,
+  },
+  imageLoader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 70,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
   center: {
     flex: 1,
