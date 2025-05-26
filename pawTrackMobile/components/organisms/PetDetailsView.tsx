@@ -12,6 +12,8 @@ const PetDetailsView = () => {
     const theme = getTheme();
     const [petData, setPetData] = useState<any>(null);
     const [tasks, setTasks] = useState<any[]>([]);
+    const [petLoading, setPetLoading] = useState(true);
+    const [tasksLoading, setTasksLoading] = useState(true);
 
     const ITEMS_PER_PAGE = 3;
 
@@ -20,17 +22,23 @@ const PetDetailsView = () => {
 
     useEffect(() => {
         const loadPetAndTasks = async () => {
+            setPetLoading(true);
+            setTasksLoading(true);
+
             const petContent = await getPetById(id as string);
             if (!petContent) return;
-            setPetData(petContent)
+
+            setPetData(petContent);
+            setPetLoading(false);
 
             const taskList = await getTasksByPetId(id as string);
-
             setTasks(taskList);
+            setTasksLoading(false);
         };
 
         loadPetAndTasks();
     }, [id]);
+
 
     if (!petData) return null;
 
@@ -61,7 +69,18 @@ const PetDetailsView = () => {
     return (
         <ScrollView>
             <View style={styles.profileSection}>
-                <Image source={{uri: petData.picture}} style={styles.profileImage}/>
+                <View style={{ position: 'relative' }}>
+                    {petLoading && (
+                        <View style={[styles.profileImage, styles.imageLoader]}>
+                            <Text>Loading...</Text>
+                        </View>
+                    )}
+                    <Image
+                        source={{ uri: petData.picture }}
+                        style={[styles.profileImage, petLoading ? { opacity: 0 } : { opacity: 1 }]}
+                        onLoadEnd={() => setPetLoading(false)}
+                    />
+                </View>
                 <View style={styles.profileTextContainer}>
                     <Text style={styles.petName}>{petData.name}</Text>
                     <Text style={styles.petInfo}>
@@ -71,91 +90,94 @@ const PetDetailsView = () => {
                 </View>
             </View>
 
-            <View>
-                <Text style={{fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown}}>
-                    <FontAwesome name="medkit" size={16}/> Vaccinations
-                </Text>
-                {vaccinations.length === 0 ? (
-                    <Text style={{textAlign: 'center', marginTop: 12, color: '#999'}}>
-                        No vaccinations found.
-                    </Text>
-                ) : (
-                    <>
-                        {paginate(vaccinations, vaccinationPage).map((v, i) => (
-                            <View
-                                key={i}
-                                style={{
-                                    backgroundColor: theme.beige,
-                                    borderRadius: 12,
-                                    padding: 12,
-                                    marginBottom: 8,
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <View>
-                                    <Text style={{fontWeight: '600', color: theme.brown}}>{v.details}</Text>
-                                    <Text
-                                        style={{color: theme.brown}}>{new Date(v.taskDate.toDate()).toLocaleString()}</Text>
-                                </View>
-                                {renderStatusIcon(v.taskDate.toDate(), v.completed)}
-                            </View>
-                        ))}
-                        {vaccinations.length > 3 && (
-                            <Paginator page={vaccinationPage}
-                                       totalItems={vaccinations.length}
-                                       itemsPerPage={ITEMS_PER_PAGE}
-                                       onPageChange={setVaccinationPage}
-                            />
+            {tasksLoading ? (
+                <Text style={{ textAlign: 'center', marginVertical: 24 }}>Loading tasks...</Text>
+            ) : (
+                <>
+                    <View>
+                        <Text style={{fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown}}>
+                            <FontAwesome name="medkit" size={16}/> Vaccinations
+                        </Text>
+                        {vaccinations.length === 0 ? (
+                            <Text style={{textAlign: 'center', marginTop: 12, color: '#999'}}>
+                                No vaccinations found.
+                            </Text>
+                        ) : (
+                            <>
+                                {paginate(vaccinations, vaccinationPage).map((v, i) => (
+                                    <View
+                                        key={i}
+                                        style={{
+                                            backgroundColor: theme.beige,
+                                            borderRadius: 12,
+                                            padding: 12,
+                                            marginBottom: 8,
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <View>
+                                            <Text style={{fontWeight: '600', color: theme.brown}}>{v.details}</Text>
+                                            <Text
+                                                style={{color: theme.brown}}>{new Date(v.taskDate.toDate()).toLocaleString()}</Text>
+                                        </View>
+                                        {renderStatusIcon(v.taskDate.toDate(), v.completed)}
+                                    </View>
+                                ))}
+                                {vaccinations.length > 3 && (
+                                    <Paginator page={vaccinationPage}
+                                               totalItems={vaccinations.length}
+                                               itemsPerPage={ITEMS_PER_PAGE}
+                                               onPageChange={setVaccinationPage}
+                                    />
+                                )}
+                            </>
                         )}
-                    </>
-                )}
-            </View>
+                    </View>
 
-
-            <View style={{marginTop: 24}}>
-                <Text style={{fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown}}>
-                    <FontAwesome name="user-md" size={16}/> Vet Appointments
-                </Text>
-                {appointments.length === 0 ? (
-                    <Text style={{textAlign: 'center', marginTop: 12, color: '#999'}}>
-                        No appointments found.
-                    </Text>
-                ) : (
-                    <>
-                        {paginate(appointments, appointmentPage).map((v, i) => (
-                            <View
-                                key={i}
-                                style={{
-                                    backgroundColor: theme.beige,
-                                    borderRadius: 12,
-                                    padding: 12,
-                                    marginBottom: 8,
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <View>
-                                    <Text style={{fontWeight: '600', color: theme.brown}}>{v.details}</Text>
-                                    <Text
-                                        style={{color: theme.brown}}>{new Date(v.taskDate.toDate()).toLocaleString()}</Text>
-                                </View>
-                                {renderStatusIcon(v.taskDate.toDate(), v.completed)}
-                            </View>
-                        ))}
-                        {appointments.length > 3 && (<Paginator
-                            page={appointmentPage}
-                            totalItems={appointments.length}
-                            itemsPerPage={ITEMS_PER_PAGE}
-                            onPageChange={setAppointmentPage}
-                        />)}
-                    </>
-                )}
-            </View>
-
-
+                    <View style={{marginTop: 24}}>
+                        <Text style={{fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown}}>
+                            <FontAwesome name="user-md" size={16}/> Vet Appointments
+                        </Text>
+                        {appointments.length === 0 ? (
+                            <Text style={{textAlign: 'center', marginTop: 12, color: '#999'}}>
+                                No appointments found.
+                            </Text>
+                        ) : (
+                            <>
+                                {paginate(appointments, appointmentPage).map((v, i) => (
+                                    <View
+                                        key={i}
+                                        style={{
+                                            backgroundColor: theme.beige,
+                                            borderRadius: 12,
+                                            padding: 12,
+                                            marginBottom: 8,
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <View>
+                                            <Text style={{fontWeight: '600', color: theme.brown}}>{v.details}</Text>
+                                            <Text
+                                                style={{color: theme.brown}}>{new Date(v.taskDate.toDate()).toLocaleString()}</Text>
+                                        </View>
+                                        {renderStatusIcon(v.taskDate.toDate(), v.completed)}
+                                    </View>
+                                ))}
+                                {appointments.length > 3 && (<Paginator
+                                    page={appointmentPage}
+                                    totalItems={appointments.length}
+                                    itemsPerPage={ITEMS_PER_PAGE}
+                                    onPageChange={setAppointmentPage}
+                                />)}
+                            </>
+                        )}
+                    </View>
+                </>
+            )}
         </ScrollView>
     );
 }
@@ -165,6 +187,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 32,
+    },
+    imageLoader: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f2f2f2',
     },
     profileImage: {
         width: 100,
