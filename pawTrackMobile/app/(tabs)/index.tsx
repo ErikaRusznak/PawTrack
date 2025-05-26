@@ -17,6 +17,7 @@ const HomeScreen = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageLoadingStates, setImageLoadingStates] = useState<Record<string, boolean>>({});
+  const [isModalImageLoading, setIsModalImageLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -149,27 +150,41 @@ const HomeScreen = () => {
           >
             <View style={[styles.taskModal, { width: screenWidth * 0.8 }]}>
               {selectedTask && (
-                <>
-                  <View style={styles.modalHeader}>
-                    {(() => {
-                      const petPicture = pets.find(p => p.id === selectedTask.petId)?.picture;
-                      return petPicture ? (
-                        <Image source={{ uri: petPicture }} style={styles.modalPetImage} />
-                      ) : null;
-                    })()}
-                    <TextSemiBold style={styles.modalTaskTitle}>{selectedTask.taskTitle}</TextSemiBold>
-                  </View>
-                  <View style={styles.modalContent}>
-                    <TextSemiBold style={styles.modalLabel}>Date:</TextSemiBold>
-                    <TextRegular style={styles.modalValue}>{formatTaskDate(selectedTask)}</TextRegular>
+                  <>
+                    <View style={styles.modalHeader}>
+                      {(() => {
+                        const petPicture = pets.find(p => p.id === selectedTask.petId)?.picture;
 
-                    <TextSemiBold style={styles.modalLabel}>Hours:</TextSemiBold>
-                    <TextRegular style={styles.modalValue}>{formatTaskTime(selectedTask)}</TextRegular>
+                        return petPicture ? (
+                            <View style={{ position: 'relative', width: 80, height: 80 }}>
+                              {isModalImageLoading && (
+                                  <View style={styles.modalImageLoader}>
+                                    <ActivityIndicator size="small" color={theme.orange} />
+                                  </View>
+                              )}
+                              <Image
+                                  source={{ uri: petPicture }}
+                                  style={styles.modalPetImage}
+                                  onLoadStart={() => setIsModalImageLoading(true)}
+                                  onLoadEnd={() => setIsModalImageLoading(false)}
+                              />
+                            </View>
+                        ) : null;
+                      })()}
+                      <TextSemiBold style={styles.modalTaskTitle}>{selectedTask.taskTitle}</TextSemiBold>
+                    </View>
 
-                    <TextSemiBold style={styles.modalLabel}>Details:</TextSemiBold>
-                    <TextRegular style={styles.modalValue}>{selectedTask.details}</TextRegular>
-                  </View>
-                </>
+                    <View style={styles.modalContent}>
+                      <TextSemiBold style={styles.modalLabel}>Date:</TextSemiBold>
+                      <TextRegular style={styles.modalValue}>{formatTaskDate(selectedTask)}</TextRegular>
+
+                      <TextSemiBold style={styles.modalLabel}>Hours:</TextSemiBold>
+                      <TextRegular style={styles.modalValue}>{formatTaskTime(selectedTask)}</TextRegular>
+
+                      <TextSemiBold style={styles.modalLabel}>Details:</TextSemiBold>
+                      <TextRegular style={styles.modalValue}>{selectedTask.details}</TextRegular>
+                    </View>
+                  </>
               )}
             </View>
           </TouchableOpacity>
@@ -192,6 +207,16 @@ const styles = StyleSheet.create({
     left: 0,
     width: 70,
     height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  modalImageLoader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 80,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
@@ -295,6 +320,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
+    marginTop: 20,
     color: '#443627',
   },
   modalContent: {
