@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, StyleSheet, TouchableOpacity, ScrollView, Text, Image, Modal } from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ScrollView, Text, Image, Modal, ActivityIndicator} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import CustomCalendar from '@/components/atoms/CustomCalendar';
 import { getPetsForUser, Pet } from '@/src/Pets';
@@ -15,6 +15,7 @@ const HomeScreen = () => {
   const theme = getTheme();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -22,22 +23,37 @@ const HomeScreen = () => {
   const screenWidth = Dimensions.get('window').width;
 
   const getTasks = async () => {
-    const userId = await AsyncStorage.getItem('userId');
-    if (!userId) return;
-    const petsForUser = await getPetsForUser(userId);
-    setPets(petsForUser);
-    if (petsForUser.length > 0) {
-      const petIds = petsForUser.map(p => p.id);
-      const tasksForPets = await getTasksForPets(petIds, selectedDate);
-      setTasks(tasksForPets);
-    } else {
-      setTasks([]);
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) return;
+      const petsForUser = await getPetsForUser(userId);
+      setPets(petsForUser);
+      if (petsForUser.length > 0) {
+        const petIds = petsForUser.map(p => p.id);
+        const tasksForPets = await getTasksForPets(petIds, selectedDate);
+        setTasks(tasksForPets);
+      } else {
+        setTasks([]);
+      }
+    } catch (error) {
+      console.error('Error loading vets:', error);
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     getTasks();
   }, [selectedDate]);
+
+  if (loading) {
+    return (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color={theme.orange} />
+          <Text>Loading tasks...</Text>
+        </View>
+    );
+  }
 
   const handleDateSelect = (day: any) => {
     setSelectedDate(new Date(day.dateString));
@@ -151,6 +167,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     gap: 10,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   dateRow: {
     marginTop: 10,
