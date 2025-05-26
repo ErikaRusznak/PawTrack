@@ -1,5 +1,5 @@
 import { useForm, Controller } from 'react-hook-form';
-import { View, StyleSheet, TextInput, TouchableOpacity, Image, Text } from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
 import { TextMedium } from '@/components/StyledText';
 import DefaultFormField from '@/components/moleculas/form/DefaultFormField';
 import * as ImagePicker from 'expo-image-picker';
@@ -29,6 +29,7 @@ const EditPetForm = () => {
   const [image, setImage] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownValue, setDropdownValue] = useState<string | null>(null);
+  const [pictureLoading, setPictureLoading] = useState(false);
   const { control, handleSubmit, setValue, formState: { errors }, reset } = useForm<any>();
 
   const loadPet = async () => {
@@ -74,11 +75,16 @@ const EditPetForm = () => {
       let pictureUrl = data.picture;
 
       if (image && image !== data.picture) {
+        setPictureLoading(true);
+
         const response = await fetch(image);
         const blob = await response.blob();
+
         const fileRef = ref(storage, `petPictures/${uuid.v4()}.jpg`);
         await uploadBytes(fileRef, blob);
+
         pictureUrl = await getDownloadURL(fileRef);
+        setPictureLoading(false);
       }
 
       await updatePet(id as string, {
@@ -90,23 +96,34 @@ const EditPetForm = () => {
       Toast.show({ type: 'success', text1: 'Pet updated!' });
       router.replace("/(tabs)/pets");
     } catch (err) {
+      setPictureLoading(false);
       Toast.show({ type: 'error', text1: 'Update failed' });
       console.error(err);
     }
   };
 
+
+
   return (
     <View>
       <TouchableOpacity
-        onPress={pickImage}
-        style={[
-          styles.imagePicker,
-          { borderColor: image ? "white" : theme.brown }
-        ]}>
-        {image ?
-          <Image source={{ uri: image }} style={styles.image} /> : <TextMedium>Add Image</TextMedium>
-        }
+          onPress={pickImage}
+          style={[
+            styles.imagePicker,
+            { borderColor: image ? "white" : theme.brown }
+          ]}
+          disabled={pictureLoading}
+      >
+        {pictureLoading ? (
+            <ActivityIndicator size="small" color={theme.brown} />
+        ) : image ? (
+            <Image source={{ uri: image }} style={styles.image} />
+        ) : (
+            <TextMedium>Add Image</TextMedium>
+        )}
       </TouchableOpacity>
+
+
 
       <DefaultFormField
         control={control}
