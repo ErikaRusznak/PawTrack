@@ -75,16 +75,22 @@ const LostAndFoundScreen = () => {
               <Text>Loading posts...</Text>
             </View>
         ) : (
-            <FlatList
-                data={posts}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <LostAndFoundPostCard post={item} />
-                )}
-                showsVerticalScrollIndicator={false}
-            />
+            <>
+              {posts.length === 0 && (
+                  <Text style={styles.noPosts}>No tasks in this county.</Text>
+              )}
+              <FlatList
+                  data={posts}
+                  keyExtractor={item => item.id}
+                  renderItem={({ item }) => (
+                      <LostAndFoundPostCard post={item} />
+                  )}
+                  showsVerticalScrollIndicator={false}
+              />
+            </>
         )}
       </View>
+
 
     </View>
   );
@@ -136,7 +142,12 @@ const styles = StyleSheet.create({
     color: "#f2f6d0",
     fontSize: 20,
   },
-
+  noPosts: {
+    textAlign: 'center',
+    color: '#999',
+    fontSize: 18,
+    marginTop: 4,
+  },
 });
 
 export default LostAndFoundScreen;
