@@ -32,7 +32,13 @@ export const addMessage = async (message: Omit<Message, 'id'>) => {
 };
 
 export const getMessagesForChatByKey = async (chatKey: string) => {
-    const messagesQuery = query(collection(db, TABLE_NAME), where('chatKey', '==', chatKey), orderBy('sentAt', 'asc'));
-    const snapshot = await getDocs(messagesQuery);
-    return snapshot.docs.map(doc => doc.data() as Message);
+
+    try {
+        const messagesQuery = query(collection(db, TABLE_NAME), where('chatKey', '==', chatKey), orderBy('sentAt', 'asc'));
+        const snapshot = await getDocs(messagesQuery);
+        return snapshot.docs.map(doc => doc.data() as Message);
+    } catch (err) {
+        console.error("Error fetching messages:", err);
+        return [];
+    }
 };

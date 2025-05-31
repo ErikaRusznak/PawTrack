@@ -1,4 +1,4 @@
-import { TextMedium, TextRegular } from "@/components/StyledText";
+import { TextMedium } from "@/components/StyledText";
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
 import { TextInput, TextStyle } from "react-native";
 import { StyleSheet } from 'react-native';

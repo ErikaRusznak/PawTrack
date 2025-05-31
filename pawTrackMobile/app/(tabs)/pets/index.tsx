@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {StyleSheet, TouchableOpacity, ScrollView, Text} from 'react-native';
-import { View } from '@/components/Themed';
+import {StyleSheet, TouchableOpacity, ScrollView, Text, View} from 'react-native';
 import PetCard from '@/components/moleculas/pets/PetCard';
 import { TextMedium } from '@/components/StyledText';
 import { useRouter } from 'expo-router';

@@ -1,5 +1,5 @@
-import {StyleSheet, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
-import {getTheme, Text, View} from '@/components/Themed';
+import {StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, View} from 'react-native';
+import {getTheme} from '@/components/Themed';
 import { TextMedium, TextRegular } from '@/components/StyledText';
 import Feather from '@expo/vector-icons/build/Feather';
 import React, { useEffect, useState } from 'react';
@@ -73,12 +73,12 @@ const LostAndFoundScreen = () => {
         {loading ? (
             <View style={styles.loaderContainer}>
               <ActivityIndicator size="large" color={theme.orange} />
-              <Text>Loading posts...</Text>
+              <TextMedium>Loading posts...</TextMedium>
             </View>
         ) : (
             <>
               {posts.length === 0 && (
-                  <Text style={styles.noPosts}>No tasks in this county.</Text>
+                  <TextMedium style={styles.noPosts}>No tasks in this county.</TextMedium>
               )}
               <FlatList
                   data={posts}

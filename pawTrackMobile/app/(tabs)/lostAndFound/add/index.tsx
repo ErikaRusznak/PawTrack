@@ -1,7 +1,6 @@
-import { View } from '@/components/Themed';
 import { useRouter } from 'expo-router';
-import { getPets, getPetsForUser, Pet } from '@/src/Pets';
-import { StyleSheet } from 'react-native';
+import { getPetsForUser, Pet } from '@/src/Pets';
+import { StyleSheet, View } from 'react-native';
 import LostAndFoundPostForm from '@/components/organisms/LostAndFoundPostForm';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';

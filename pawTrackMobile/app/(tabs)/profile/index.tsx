@@ -1,6 +1,4 @@
-import { StyleSheet } from 'react-native';
-
-import { View } from '@/components/Themed';
+import { StyleSheet, View } from 'react-native';
 import ProfileInfo from '@/components/organisms/ProfileInfo';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,8 +24,6 @@ const ProfileScreen = () => {
                 setUser(profile);
 
                 const petsCount = await countPetsForUser(id);
-                if (!petsCount) throw new Error('Pets count not found');
-
                 setPetsCount(petsCount);
             } catch (e) {
                 Toast.show({ type: 'error', text1: 'Failed to load profile' });

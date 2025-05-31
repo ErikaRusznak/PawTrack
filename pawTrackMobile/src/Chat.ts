@@ -43,7 +43,19 @@ export const updateChatLastMessage = async (chatId: string, lastMessage: string)
 };
 
 export const getChatsForUser = async (userId: string) => {
-    const chatQuery = query(collection(db, TABLE_NAME), where('users', 'array-contains', userId), orderBy('lastMessageSentAt', 'desc'));
-    const snapshot = await getDocs(chatQuery);
-    return snapshot.docs.map(doc => doc.data());
+    try {
+        const chatQuery = query(collection(db, TABLE_NAME), where('users', 'array-contains', userId), orderBy('lastMessageSentAt', 'desc'));
+        const snapshot = await getDocs(chatQuery);
+        return snapshot.docs.map(doc => {
+            const data = doc.data();
+            if (data.lastMessageSentAt && data.lastMessageSentAt.seconds) {
+                data.lastMessageSentAt = new Date(data.lastMessageSentAt.seconds * 1000);
+            }
+            return data;
+        });
+    } catch (err) {
+        console.error("Error fetching chats:", err);
+        return [];
+    }
+
 };

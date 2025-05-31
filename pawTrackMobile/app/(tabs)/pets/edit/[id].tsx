@@ -1,5 +1,4 @@
-import { View } from '@/components/Themed';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import EditPetForm from '@/components/organisms/EditPetForm';
 
 const EditPetScreen = () => {

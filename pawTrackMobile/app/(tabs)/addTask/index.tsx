@@ -1,8 +1,6 @@
-import { View } from '@/components/Themed';
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from 'react';
-import { useForm } from "react-hook-form";
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import TaskForm from '@/components/organisms/TaskForm';
 import { Pet, getPets } from '@/src/Pets';
 import { addTask, Task } from '@/src/Task';

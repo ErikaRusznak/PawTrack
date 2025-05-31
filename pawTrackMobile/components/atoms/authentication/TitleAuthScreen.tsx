@@ -1,7 +1,7 @@
 import { TextSemiBold } from "@/components/StyledText";
-import { getTheme, View } from "@/components/Themed";
+import { getTheme } from "@/components/Themed";
 import { FontAwesome } from "@expo/vector-icons";
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 const TitleAuthScreen = () => {
   const theme = getTheme();
