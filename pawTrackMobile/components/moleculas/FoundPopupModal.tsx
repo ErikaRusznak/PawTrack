@@ -1,24 +1,69 @@
 import React, { useState } from 'react';
-import { Modal, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Modal, View, StyleSheet, TouchableOpacity, Text, TextInput } from 'react-native';
 import { TextMedium } from '@/components/StyledText';
 import ImageUploader from './form/ImageUploader';
 import { getTheme } from '@/components/Themed';
 import { FontAwesome } from '@expo/vector-icons';
+import { getOrCreateChat, updateChatLastMessage } from '@/src/Chat';
+import { addMessage } from '@/src/Message';
+import { db } from '@/firebase/firebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { storage } from '@/firebase/firebaseConfig';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import uuid from 'react-native-uuid';
+import Toast from 'react-native-toast-message';
 
 type FoundPopupModalProps = {
   visible: boolean;
   onClose: () => void;
   post: any;
-}
+  foundPetForUserId: string;
+};
 
-const FoundPopupModal = ({ visible, onClose }: FoundPopupModalProps) => {
+const FoundPopupModal = ({ visible, onClose, foundPetForUserId }: FoundPopupModalProps) => {
   const theme = getTheme();
   const [details, setDetails] = useState('');
   const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
   const [resetKey, setResetKey] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = () => {
-    onClose();
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    try {
+      const senderId = await AsyncStorage.getItem('userId');
+      if (!senderId) throw new Error('User ID not found');
+      if (!foundPetForUserId) throw new Error('Recipient user ID not found');
+      let pictureUrl = '';
+      if (selectedImageUri) {
+        const response = await fetch(selectedImageUri);
+        const blob = await response.blob();
+        const fileRef = ref(storage, `messages/${uuid.v4()}.jpg`);
+        await uploadBytes(fileRef, blob);
+        pictureUrl = await getDownloadURL(fileRef);
+      }
+      // Get or create chat and chatKey
+      const { chatId, chatKey } = await getOrCreateChat(senderId, foundPetForUserId, details);
+      // Add message
+      await addMessage({
+        chatKey,
+        sentByUser: true,
+        text: details,
+        sentAt: new Date(),
+        picture: pictureUrl,
+      });
+      // Update chat last message
+      await updateChatLastMessage(chatId, details);
+      onClose();
+      Toast.show({ type: 'success', text1: 'Message sent!' });
+      setResetKey((k) => k + 1);
+      setDetails("");
+    } catch (err) {
+      Toast.show({ type: 'error', text1: 'Failed to send message' });
+      console.error('Failed to send message:', err);
+      onClose();
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -29,20 +74,21 @@ const FoundPopupModal = ({ visible, onClose }: FoundPopupModalProps) => {
             <TextMedium style={styles.title}>Found</TextMedium>
             <FontAwesome name="paw" size={20} color={theme.orange} />
           </View>
-
           <TextMedium style={styles.label}>Details</TextMedium>
           <View style={styles.textareaWrapper}>
-            <Text
+            <TextInput
               style={styles.textarea}
+              value={details}
+              onChangeText={setDetails}
+              placeholder="Details...."
+              placeholderTextColor="#bbb"
+              multiline
               numberOfLines={4}
-              onPress={() => { }}
-            >
-              {details || 'Details....'}
-            </Text>
+            />
           </View>
           <ImageUploader onImageSelected={setSelectedImageUri} aspect1={16} aspect2={9} resetKey={resetKey} />
-          <TouchableOpacity style={styles.submit} onPress={handleSubmit}>
-            <TextMedium style={styles.submitText}>Submit</TextMedium>
+          <TouchableOpacity style={styles.submit} onPress={handleSubmit} disabled={submitting}>
+            <TextMedium style={styles.submitText}>{submitting ? 'Submitting...' : 'Submit'}</TextMedium>
           </TouchableOpacity>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -83,11 +129,11 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    marginBottom: 4,
-    color: "#443627",
+    color: '#443627',
+    marginBottom: 6,
+    alignSelf: 'flex-start',
   },
   textareaWrapper: {
-    width: '100%',
     backgroundColor: '#fff',
     borderRadius: 14,
     borderWidth: 1,
@@ -101,15 +147,15 @@ const styles = StyleSheet.create({
   },
   textarea: {
     minHeight: 80,
-    fontSize: 16,
+    fontSize: 14,
     color: '#443627',
     padding: 12,
     fontFamily: 'Montserrat-Regular',
+    textAlignVertical: 'top',
   },
   submit: {
     backgroundColor: '#d98324',
-    paddingHorizontal: 32,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 12,
     marginTop: 18,
     alignItems: 'center',
@@ -121,8 +167,7 @@ const styles = StyleSheet.create({
   },
   submitText: {
     color: '#f2f6d0',
-    fontSize: 22,
-    fontWeight: 'bold',
+    fontSize: 18,
     textAlign: 'center',
   },
 });

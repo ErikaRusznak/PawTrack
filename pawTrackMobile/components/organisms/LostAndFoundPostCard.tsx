@@ -83,6 +83,7 @@ const LostAndFoundPostCard = ({ post }: LostAndFoundPostCardProps) => {
         visible={foundModalVisible}
         onClose={() => setFoundModalVisible(false)}
         post={post}
+        foundPetForUserId={post.userId}
       />
     </View>
   );
