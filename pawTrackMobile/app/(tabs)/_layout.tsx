@@ -150,9 +150,19 @@ const TabLayout = () => {
           headerTitle: () => <HeaderText text={'Lost&Found'} />,
         }}
       />
+      <Tabs.Screen
+        name="messages/[id]"
+        options={{
+          href: null,
+          animation: 'fade',
+          headerTitleAlign: 'left',
+          headerLeft: () => <BackIcon backPage='/(tabs)/messages' />,
+          headerTitle: () => <HeaderText text={'Messages'} />,
+        }}
+      />
     </Tabs>
 
-    
+
   );
 }
 

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TextInput, FlatList, TouchableOpacity, Image, View as RNView, ActivityIndicator, View } from 'react-native';
+import { StyleSheet, TextInput, FlatList, TouchableOpacity, Image, View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Chat, getChatsForUser } from '@/src/Chat';
 import { getUserProfile } from '@/src/User';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { TextMedium, TextRegular } from '@/components/StyledText';
+import { useRouter } from 'expo-router';
 
 const MessagesScreen = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -13,6 +14,7 @@ const MessagesScreen = () => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [userProfiles, setUserProfiles] = useState<{ [key: string]: any }>({});
+  const router = useRouter();
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -65,22 +67,37 @@ const MessagesScreen = () => {
     }
   }
 
+  const handleChatPress = (chat: Chat) => {
+    // Use chatKey as id for navigation
+    const chatKey = chat.chatKey || chat.chatKey;
+    if (chatKey) {
+      router.push({ pathname: '/messages/[id]', params: { id: chatKey } });
+    }
+  };
+
   const renderChat = ({ item }: { item: Chat }) => {
     const otherUserId = item.users.find((u: string) => u !== userId);
     const profile = userProfiles[otherUserId!!];
+    if (!profile) {
+      return (
+        <View style={[styles.chatCard, { justifyContent: 'center', alignItems: 'center', minHeight: 80 }]}> 
+          <TextRegular style={{ color: '#7B6F52', marginTop: 8 }}>Loading...</TextRegular>
+        </View>
+      );
+    }
     const name = `${profile.firstName} ${profile.lastName}`;
     const picture = profile.picture ? { uri: profile.picture } : require('@/assets/images/icon.png');
     const lastMessageTime = getLastMessageTime(item.lastMessageSentAt);
     return (
-      <TouchableOpacity style={styles.chatCard}>
+      <TouchableOpacity style={styles.chatCard} onPress={() => handleChatPress(item)}>
         <Image source={picture} style={styles.avatar} />
-        <RNView style={{ flex: 1 }}>
-          <RNView style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ flex: 1 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <TextMedium style={styles.name}>{name}</TextMedium>
             <TextRegular style={styles.time}>{lastMessageTime}</TextRegular>
-          </RNView>
+          </View>
           <TextRegular style={styles.lastMessage} numberOfLines={1}>{item.lastMessage}</TextRegular>
-        </RNView>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -96,7 +113,7 @@ const MessagesScreen = () => {
 
   return (
     <View style={styles.main}>
-      <RNView style={styles.searchContainer}>
+      <View style={styles.searchContainer}>
         <Ionicons name="search" size={22} color="#7B6F52" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
@@ -105,7 +122,7 @@ const MessagesScreen = () => {
           value={search}
           onChangeText={setSearch}
         />
-      </RNView>
+      </View>
       <FlatList
         data={filteredChats}
         keyExtractor={item => item.id}
@@ -167,7 +184,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#7B6F52',
+    color: '#443627',
     fontFamily: 'Montserrat-SemiBold',
   },
   lastMessage: {
@@ -180,7 +197,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#7B6F52',
     fontFamily: 'Montserrat-Regular',
-    marginLeft: 10,
   },
 });
 

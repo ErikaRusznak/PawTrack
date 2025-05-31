@@ -5,7 +5,7 @@ const TABLE_NAME = 'message';
 
 export type Message = {
     id: string;
-    sentByUser: boolean;
+    sentByUser: string;
     text: string;
     sentAt: Date;
     picture: string;
@@ -36,7 +36,13 @@ export const getMessagesForChatByKey = async (chatKey: string) => {
     try {
         const messagesQuery = query(collection(db, TABLE_NAME), where('chatKey', '==', chatKey), orderBy('sentAt', 'asc'));
         const snapshot = await getDocs(messagesQuery);
-        return snapshot.docs.map(doc => doc.data() as Message);
+        return snapshot.docs.map(doc => {
+            const data = doc.data();
+            if(data.sentAt && data.sentAt.seconds) {
+                data.sentAt = new Date(data.sentAt.seconds * 1000);
+            }
+            return data;
+        });
     } catch (err) {
         console.error("Error fetching messages:", err);
         return [];

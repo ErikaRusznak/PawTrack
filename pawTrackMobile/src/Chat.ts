@@ -7,7 +7,7 @@ const TABLE_NAME = 'chat';
 export type Chat = {
     id: string;
     users: string[];
-    chatKet: string; // ids joined by |
+    chatKey: string; // ids joined by |
     lastMessage: string;
     lastMessageSentAt: Date;
     messages: Message[];

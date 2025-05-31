@@ -46,7 +46,7 @@ const FoundPopupModal = ({ visible, onClose, foundPetForUserId }: FoundPopupModa
       // Add message
       await addMessage({
         chatKey,
-        sentByUser: true,
+        sentByUser: senderId, 
         text: details,
         sentAt: new Date(),
         picture: pictureUrl,
