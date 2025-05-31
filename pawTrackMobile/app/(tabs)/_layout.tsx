@@ -118,7 +118,6 @@ const TabLayout = () => {
           headerTitleAlign: 'left',
           headerLeft: () => <BackIcon backPage='/(tabs)/pets' />,
           headerTitle: () => <HeaderText text={'Add Pet'} />,
-          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
       />
       <Tabs.Screen
@@ -129,7 +128,6 @@ const TabLayout = () => {
           headerTitleAlign: 'left',
           headerLeft: () => <BackIcon backPage='/(tabs)/pets' />,
           headerTitle: () => <HeaderText text={'Edit Pet'} />,
-          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
       />
       <Tabs.Screen
@@ -140,7 +138,6 @@ const TabLayout = () => {
           headerTitleAlign: 'left',
           headerLeft: () => <BackIcon backPage='/(tabs)/pets' />,
           headerTitle: () => <HeaderText text={'Pet Details'} />,
-          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
         }}
       />
       <Tabs.Screen
@@ -151,10 +148,21 @@ const TabLayout = () => {
           headerTitleAlign: 'left',
           headerLeft: () => <BackIcon backPage='/(tabs)/lostAndFound' />,
           headerTitle: () => <HeaderText text={'Lost&Found'} />,
-          headerRight: () => <HeaderIcons searchSelected={false} addSelected={false} />,
+        }}
+      />
+      <Tabs.Screen
+        name="messages/[id]"
+        options={{
+          href: null,
+          animation: 'fade',
+          headerTitleAlign: 'left',
+          headerLeft: () => <BackIcon backPage='/(tabs)/messages' />,
+          headerTitle: () => <HeaderText text={'Messages'} />,
         }}
       />
     </Tabs>
+
+
   );
 }
 

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import {getTheme, Text, View} from '@/components/Themed';
+import {getTheme} from '@/components/Themed';
 import { getUserProfile } from '@/src/User';
 import {fetchNearbyVets, geocodeCounty, fetchVetDetails} from '@/google-maps/google-maps-service';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { Callout } from 'react-native-maps';
 import { Linking } from 'react-native';
+import { TextMedium } from '@/components/StyledText';
 
 const SearchVetScreen = () => {
   const theme = getTheme();
@@ -52,7 +53,7 @@ const SearchVetScreen = () => {
     return (
         <View style={styles.center}>
           <ActivityIndicator size="large" color={theme.orange} />
-          <Text>Loading map and nearby vets...</Text>
+          <TextMedium>Loading map and nearby vets...</TextMedium>
         </View>
     );
   }
@@ -60,7 +61,7 @@ const SearchVetScreen = () => {
   if (!region) {
     return (
         <View style={styles.center}>
-          <Text>Could not load location</Text>
+          <TextMedium>Could not load location</TextMedium>
         </View>
     );
   }
@@ -100,16 +101,16 @@ const SearchVetScreen = () => {
                   }}
               >
                 <View style={{ width: 200 }}>
-                  <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{vet.name}</Text>
-                  <Text style={{ marginVertical: 4 }}>{vet.vicinity}</Text>
+                  <TextMedium style={{ fontWeight: 'bold', fontSize: 16 }}>{vet.name}</TextMedium>
+                  <TextMedium style={{ marginVertical: 4 }}>{vet.vicinity}</TextMedium>
                   {selectedVetId === vet.place_id ? (
                       selectedVetPhone ? (
-                          <Text style={{ color: 'blue', fontWeight: 'bold' }}>📞 Call: {selectedVetPhone}</Text>
+                          <TextMedium style={{ color: 'blue', fontWeight: 'bold' }}>📞 Call: {selectedVetPhone}</TextMedium>
                       ) : (
-                          <Text style={{ color: 'gray' }}>Fetching phone...</Text>
+                          <TextMedium style={{ color: 'gray' }}>Fetching phone...</TextMedium>
                       )
                   ) : (
-                      <Text style={{ color: 'gray' }}>Tap for calling</Text>
+                      <TextMedium style={{ color: 'gray' }}>Tap for calling</TextMedium>
                   )}
                 </View>
               </Callout>

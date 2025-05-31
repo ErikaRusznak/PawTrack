@@ -1,5 +1,5 @@
-import { SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
-import { getTheme, View } from '@/components/Themed';
+import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { getTheme } from '@/components/Themed';
 import { useSession } from '@/context/AuthContext';
 import { Controller, useForm } from "react-hook-form";
 import TitleAuthScreen from "@/components/atoms/authentication/TitleAuthScreen";
@@ -21,6 +21,7 @@ type RegisterData = {
   county: string;
   email: string;
   password: string;
+  phoneNumber: string;
   picture?: string;
 };
 
@@ -46,7 +47,7 @@ const SignUpScreen = () => {
         pictureUrl = await getDownloadURL(fileRef);
       }
 
-      return await signUp(data.firstName, data.lastName, Number(data.age), data.county, data.email, data.password, pictureUrl ?? null);
+      return await signUp(data.firstName, data.lastName, Number(data.age), data.county, data.email, data.password, data.phoneNumber, pictureUrl ?? null);
     } catch (err) {
       console.log("Error: ", err);
       return null;
@@ -110,7 +111,7 @@ const SignUpScreen = () => {
             <TextMedium style={styles.label}>County</TextMedium>
             <Controller
               control={control}
-              name="petId"
+              name="county"
               rules={{ required: 'County is required' }}
               render={({ field: { onChange, value } }) => (
                 <DropDownPicker
@@ -132,13 +133,21 @@ const SignUpScreen = () => {
                 />
               )}
             />
-            {errors.petId && (
-              <TextMedium style={styles.error}>{errors.petId.message as string}</TextMedium>
+            {errors.county && (
+              <TextMedium style={styles.error}>{errors.county.message as string}</TextMedium>
             )}
 
           </View>
         </View>
-
+        <DefaultFormField
+          control={control}
+          errors={errors}
+          keyboardType='numeric'
+          label='Phone number'
+          controllerName='phoneNumber'
+          errorText='Phone number is required'
+          placeholderText='Phone number...'
+        />
         <DefaultFormField
           control={control}
           errors={errors}
@@ -158,7 +167,7 @@ const SignUpScreen = () => {
           secureTextEntry={true}
         />
 
-        <ImageUploader onImageSelected={(uri) => setSelectedImageUri(uri)} resetKey={resetKey}/>
+        <ImageUploader onImageSelected={(uri) => setSelectedImageUri(uri)} resetKey={resetKey} />
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
           <TextMedium style={styles.buttonText}>Register</TextMedium>

@@ -1,5 +1,5 @@
-import {StyleSheet, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
-import {getTheme, Text, View} from '@/components/Themed';
+import {StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, View} from 'react-native';
+import {getTheme} from '@/components/Themed';
 import { TextMedium, TextRegular } from '@/components/StyledText';
 import Feather from '@expo/vector-icons/build/Feather';
 import React, { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ import CountiesDropdownModal from '@/components/atoms/CountiesDropdownModal';
 import { router } from 'expo-router';
 import LostAndFoundPostCard from '@/components/organisms/LostAndFoundPostCard';
 import { Post, getPosts } from '@/src/LostAndFoundPost';
+import { useFocusEffect } from '@react-navigation/native';
 
 const LostAndFoundScreen = () => {
 
@@ -42,15 +43,15 @@ const LostAndFoundScreen = () => {
     setInitialData();
   }, [])
 
-  useEffect(() => {
-    if (countySelected) fetchPosts();
-  }, [countySelected])
+  useFocusEffect(
+    React.useCallback(() => {
+      if (countySelected) fetchPosts();
+    }, [countySelected])
+  );
 
   const addPost = () => {
     router.replace("/(tabs)/lostAndFound/add" as any);
   };
-
-
 
   return (
     <View style={styles.main}>
@@ -72,12 +73,12 @@ const LostAndFoundScreen = () => {
         {loading ? (
             <View style={styles.loaderContainer}>
               <ActivityIndicator size="large" color={theme.orange} />
-              <Text>Loading posts...</Text>
+              <TextMedium>Loading posts...</TextMedium>
             </View>
         ) : (
             <>
               {posts.length === 0 && (
-                  <Text style={styles.noPosts}>No tasks in this county.</Text>
+                  <TextMedium style={styles.noPosts}>No tasks in this county.</TextMedium>
               )}
               <FlatList
                   data={posts}

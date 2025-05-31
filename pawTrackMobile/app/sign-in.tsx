@@ -1,5 +1,4 @@
-import { StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import { View } from '@/components/Themed';
+import { StyleSheet, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { useSession } from '@/context/AuthContext';
 import { useForm } from 'react-hook-form';
 import { router } from 'expo-router';

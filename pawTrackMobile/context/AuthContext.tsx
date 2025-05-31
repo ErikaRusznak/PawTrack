@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface AuthContextType {
   signIn: (email: string, password: string) => Promise<User | undefined>;
 
-  signUp: (firstName: string, lastName: string, age: number, county: string, email: string, password: string, picture?: string) => Promise<User | undefined>;
+  signUp: (firstName: string, lastName: string, age: number, county: string, email: string, password: string, phoneNumber: string, picture?: string) => Promise<User | undefined>;
 
   signOut: () => void;
 
@@ -61,10 +61,11 @@ export const SessionProvider = (props: { children: React.ReactNode }) => {
     county: string,
     email: string, 
     password: string, 
+    phoneNumber: string,
     picture?: string
   ) => {
     try {
-      const response = await register(firstName, lastName, age, county, email, password, picture);
+      const response = await register(firstName, lastName, age, county, email, password, phoneNumber, picture);
       return response?.user;
     } catch (error) {
       console.error("Error: ", error);

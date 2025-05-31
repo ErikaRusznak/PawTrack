@@ -1,14 +1,14 @@
-import {useLocalSearchParams} from "expo-router";
-import {getTheme} from "@/components/Themed";
-import {useEffect, useState} from "react";
-import {getPetById} from "@/src/Pets";
-import {getTasksByPetId} from "@/src/Task";
-import {FontAwesome, MaterialIcons} from "@expo/vector-icons";
-import {Image, ScrollView, StyleSheet, Text, View} from "react-native";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { getTheme } from "@/components/Themed";
+import { useCallback, useEffect, useState } from "react";
+import { getPetById } from "@/src/Pets";
+import { getTasksByPetId } from "@/src/Task";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import Paginator from "@/components/atoms/Paginator";
 
 const PetDetailsView = () => {
-    const {id} = useLocalSearchParams();
+    const { id } = useLocalSearchParams();
     const theme = getTheme();
     const [petData, setPetData] = useState<any>(null);
     const [tasks, setTasks] = useState<any[]>([]);
@@ -20,25 +20,26 @@ const PetDetailsView = () => {
     const [vaccinationPage, setVaccinationPage] = useState(0);
     const [appointmentPage, setAppointmentPage] = useState(0);
 
-    useEffect(() => {
-        const loadPetAndTasks = async () => {
-            setPetLoading(true);
-            setTasksLoading(true);
+    const loadPetAndTasks = async () => {
+        setPetLoading(true);
+        setTasksLoading(true);
 
-            const petContent = await getPetById(id as string);
-            if (!petContent) return;
+        const petContent = await getPetById(id as string);
+        if (!petContent) return;
 
-            setPetData(petContent);
-            setPetLoading(false);
+        setPetData(petContent);
+        setPetLoading(false);
 
-            const taskList = await getTasksByPetId(id as string);
-            setTasks(taskList);
-            setTasksLoading(false);
-        };
+        const taskList = await getTasksByPetId(id as string);
+        setTasks(taskList);
+        setTasksLoading(false);
+    };
 
-        loadPetAndTasks();
-    }, [id]);
-
+    useFocusEffect(
+        useCallback(() => {
+            loadPetAndTasks();
+        }, [id])
+    );
 
     if (!petData) return null;
 
@@ -47,16 +48,16 @@ const PetDetailsView = () => {
 
     const renderStatusIcon = (dateStr: string, completed: boolean) => {
         if (completed) {
-            return <MaterialIcons name="check-circle" size={20} color="#4CAF50"/>;
+            return <MaterialIcons name="check-circle" size={20} color="#4CAF50" />;
         }
         const now = new Date();
         const date = new Date(dateStr);
         if (date > now) {
-            return <MaterialIcons name="schedule" size={20} color="#A67C00"/>;
+            return <MaterialIcons name="schedule" size={20} color="#A67C00" />;
         } else if (date == now) {
-            return <MaterialIcons name="error" size={20} color="#2196F3"/>;
+            return <MaterialIcons name="error" size={20} color="#2196F3" />;
         } else {
-            return <MaterialIcons name="cancel" size={20} color="#F44336"/>;
+            return <MaterialIcons name="cancel" size={20} color="#F44336" />;
         }
     };
 
@@ -95,11 +96,11 @@ const PetDetailsView = () => {
             ) : (
                 <>
                     <View>
-                        <Text style={{fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown}}>
-                            <FontAwesome name="medkit" size={16}/> Vaccinations
+                        <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown }}>
+                            <FontAwesome name="medkit" size={16} /> Vaccinations
                         </Text>
                         {vaccinations.length === 0 ? (
-                            <Text style={{textAlign: 'center', marginTop: 12, color: '#999'}}>
+                            <Text style={{ textAlign: 'center', marginTop: 12, color: '#999' }}>
                                 No vaccinations found.
                             </Text>
                         ) : (
@@ -118,30 +119,30 @@ const PetDetailsView = () => {
                                         }}
                                     >
                                         <View>
-                                            <Text style={{fontWeight: '600', color: theme.brown}}>{v.details}</Text>
+                                            <Text style={{ fontWeight: '600', color: theme.brown }}>{v.details}</Text>
                                             <Text
-                                                style={{color: theme.brown}}>{new Date(v.taskDate.toDate()).toLocaleString()}</Text>
+                                                style={{ color: theme.brown }}>{new Date(v.taskDate.toDate()).toLocaleString()}</Text>
                                         </View>
                                         {renderStatusIcon(v.taskDate.toDate(), v.completed)}
                                     </View>
                                 ))}
                                 {vaccinations.length > 3 && (
                                     <Paginator page={vaccinationPage}
-                                               totalItems={vaccinations.length}
-                                               itemsPerPage={ITEMS_PER_PAGE}
-                                               onPageChange={setVaccinationPage}
+                                        totalItems={vaccinations.length}
+                                        itemsPerPage={ITEMS_PER_PAGE}
+                                        onPageChange={setVaccinationPage}
                                     />
                                 )}
                             </>
                         )}
                     </View>
 
-                    <View style={{marginTop: 24}}>
-                        <Text style={{fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown}}>
-                            <FontAwesome name="user-md" size={16}/> Vet Appointments
+                    <View style={{ marginTop: 24 }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 8, color: theme.brown }}>
+                            <FontAwesome name="user-md" size={16} /> Vet Appointments
                         </Text>
                         {appointments.length === 0 ? (
-                            <Text style={{textAlign: 'center', marginTop: 12, color: '#999'}}>
+                            <Text style={{ textAlign: 'center', marginTop: 12, color: '#999' }}>
                                 No appointments found.
                             </Text>
                         ) : (
@@ -160,9 +161,9 @@ const PetDetailsView = () => {
                                         }}
                                     >
                                         <View>
-                                            <Text style={{fontWeight: '600', color: theme.brown}}>{v.details}</Text>
+                                            <Text style={{ fontWeight: '600', color: theme.brown }}>{v.details}</Text>
                                             <Text
-                                                style={{color: theme.brown}}>{new Date(v.taskDate.toDate()).toLocaleString()}</Text>
+                                                style={{ color: theme.brown }}>{new Date(v.taskDate.toDate()).toLocaleString()}</Text>
                                         </View>
                                         {renderStatusIcon(v.taskDate.toDate(), v.completed)}
                                     </View>

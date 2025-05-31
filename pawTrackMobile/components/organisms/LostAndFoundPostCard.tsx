@@ -1,33 +1,43 @@
 import React, { useState } from 'react';
-import {View, Image, TouchableOpacity, StyleSheet, Animated, ActivityIndicator} from 'react-native';
+import { View, Image, TouchableOpacity, StyleSheet, Animated, ActivityIndicator } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import { Post } from '@/src/LostAndFoundPost';
 import { formatDate, formatTime } from '@/util/HelperFunctions';
 import { TextMedium, TextRegular, TextSemiBold } from '../StyledText';
-import {getTheme} from "@/components/Themed";
+import { getTheme } from "@/components/Themed";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import FoundPopupModal from '../moleculas/FoundPopupModal';
 
 
 type LostAndFoundPostCardProps = {
   post: Post;
 }
 
-const LostAndFoundPostCard = ({ post } : LostAndFoundPostCardProps) => {
+const LostAndFoundPostCard = ({ post }: LostAndFoundPostCardProps) => {
   const theme = getTheme();
   const [expanded, setExpanded] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [postImageLoading, setPostImageLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [foundModalVisible, setFoundModalVisible] = useState(false);
+
+  React.useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem('userId');
+      setUserId(id);
+    })();
+  }, []);
 
   return (
     <View style={styles.card}>
-      {/* Header */}
       <View style={styles.headerRow}>
         <View style={styles.avatarWrapper}>
           {avatarLoading && <ActivityIndicator style={styles.avatarLoader} size="small" color={theme.orange} />}
           <Image
-              source={post.userPicture ? { uri: post.userPicture } : require('@/assets/images/icon.png')}
-              style={styles.avatar}
-              onLoadStart={() => setAvatarLoading(true)}
-              onLoadEnd={() => setAvatarLoading(false)}
+            source={post.userPicture ? { uri: post.userPicture } : require('@/assets/images/icon.png')}
+            style={styles.avatar}
+            onLoadStart={() => setAvatarLoading(true)}
+            onLoadEnd={() => setAvatarLoading(false)}
           />
         </View>
 
@@ -35,23 +45,27 @@ const LostAndFoundPostCard = ({ post } : LostAndFoundPostCardProps) => {
           <TextMedium style={styles.name}>{post.userFirstName} {post.userLastName}</TextMedium>
           <TextRegular style={styles.date}>{formatDate(post.createdAt)} {formatTime(post.createdAt)}</TextRegular>
         </View>
-        <View style={styles.foundBadge}>
-          <TextRegular style={styles.foundText}>{post.found ? 'Found' : 'qFound'}</TextRegular>
-        </View>
+        {userId !== post.userId && (
+          <TouchableOpacity onPress={() => setFoundModalVisible(true)}>
+            <View style={[styles.foundButton, !post.found && styles.notFoundButton]}>
+              <TextRegular style={styles.foundText}>{post.found ? 'Found' : 'Contact owner here'}</TextRegular>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
       {post.picture && (
-          <View style={styles.postImageWrapper}>
-            {postImageLoading && (
-                <ActivityIndicator style={styles.imageLoader} size="large" color="#d98324" />
-            )}
-            <Image
-                source={{ uri: post.picture }}
-                style={styles.postImage}
-                resizeMode="cover"
-                onLoadStart={() => setPostImageLoading(true)}
-                onLoadEnd={() => setPostImageLoading(false)}
-            />
-          </View>
+        <View style={styles.postImageWrapper}>
+          {postImageLoading && (
+            <ActivityIndicator style={styles.imageLoader} size="large" color="#d98324" />
+          )}
+          <Image
+            source={{ uri: post.picture }}
+            style={styles.postImage}
+            resizeMode="cover"
+            onLoadStart={() => setPostImageLoading(true)}
+            onLoadEnd={() => setPostImageLoading(false)}
+          />
+        </View>
       )}
 
       <TouchableOpacity
@@ -65,6 +79,12 @@ const LostAndFoundPostCard = ({ post } : LostAndFoundPostCardProps) => {
       {expanded && (
         <TextRegular style={styles.details}>{post.details}</TextRegular>
       )}
+      <FoundPopupModal
+        visible={foundModalVisible}
+        onClose={() => setFoundModalVisible(false)}
+        post={post}
+        foundPetForUserId={post.userId}
+      />
     </View>
   );
 };
@@ -131,15 +151,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
   },
-  foundBadge: {
+  foundButton: {
     backgroundColor: '#f7c873',
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 2,
     marginLeft: 8,
   },
+  notFoundButton: {
+    backgroundColor: '#ffa3a3',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    marginLeft: 8,
+  },
   foundText: {
-    color: '#a05a00',
+    color: '#443627',
     fontWeight: 'bold',
     fontSize: 13,
   },

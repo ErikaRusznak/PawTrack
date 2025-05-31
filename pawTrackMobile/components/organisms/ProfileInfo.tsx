@@ -1,48 +1,23 @@
-import {View, Image, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
 import { TextMedium } from '@/components/StyledText';
 import { useSession } from '@/context/AuthContext';
-import {getTheme, Text} from '@/components/Themed';
+import { getTheme, Text } from '@/components/Themed';
 import { FontAwesome5, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import Toast from 'react-native-toast-message';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getUserProfile } from '@/src/User';
-import {countPetsForUser} from "@/src/Pets";
+import React, { useState } from 'react';
 
-const ProfileInfo = () => {
+type ProfileInfoProps = {
+    user: any;
+    loading: boolean;
+    petsCount: number;
+    showLogoutButton?: boolean;
+}
+
+const ProfileInfo = ({ user, loading, petsCount, showLogoutButton = true }: ProfileInfoProps) => {
     const theme = getTheme();
     const { signOut } = useSession();
-    const [user, setUser] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
     const [imageLoading, setImageLoading] = useState(true);
-    const [petsCount, setPetsCount] = useState<number | null>(null);
 
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const id = await AsyncStorage.getItem('userId');
-                if (!id) throw new Error('User ID not found in storage');
-
-                const profile = await getUserProfile(id);
-                if (!profile) throw new Error('User profile not found');
-
-                setUser(profile);
-
-                const petsCount = await countPetsForUser(id);
-                if (!petsCount) throw new Error('Pets count not found');
-
-                setPetsCount(petsCount);
-            } catch (e) {
-                Toast.show({ type: 'error', text1: 'Failed to load profile' });
-                console.error(e);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        void fetchUserProfile();
-    }, []);
-
+console.log("user", user);
     if (loading) {
         return (
             <View style={styles.center}>
@@ -51,9 +26,8 @@ const ProfileInfo = () => {
             </View>
         );
     }
-
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, showLogoutButton ? {gap: 32} : {gap: 0}]}>
             {user?.picture && (
                 <View style={{ position: 'relative' }}>
                     {imageLoading && (
@@ -71,37 +45,45 @@ const ProfileInfo = () => {
                 </View>
             )}
 
-
             <View style={styles.infoBlock}>
                 <View style={styles.infoRow}>
-                    <FontAwesome5 name="user" size={18} color="black" />
+                    <FontAwesome5 name="user" size={18} color="#443627" />
                     <TextMedium style={styles.infoText}>
                         {user?.firstName} {user?.lastName}
                     </TextMedium>
                 </View>
                 <View style={styles.infoRow}>
-                    <MaterialCommunityIcons name="calendar" size={20} color="black" />
+                    <MaterialCommunityIcons name="calendar" size={20} color="#443627" />
                     <TextMedium style={styles.infoText}>
                         {user?.age} years old
                     </TextMedium>
                 </View>
                 <View style={styles.infoRow}>
-                    <Entypo name="location-pin" size={20} color="black" />
+                    <Entypo name="location-pin" size={20} color="#443627" />
                     <TextMedium style={styles.infoText}>
                         {user?.county}
                     </TextMedium>
                 </View>
                 <View style={styles.infoRow}>
-                    <FontAwesome5 name="paw" size={18} color="black" />
+                    <FontAwesome5 name="paw" size={18} color="#443627" />
                     <TextMedium style={styles.infoText}>
                         {petsCount} animals
                     </TextMedium>
                 </View>
+                {user?.phoneNumber && (
+                    <TouchableOpacity style={styles.infoRow} onPress={() => Linking.openURL(`tel:${user.phoneNumber}`)}>
+                        <MaterialCommunityIcons name="phone" size={20} color="#1e88e5" />
+                        <TextMedium style={[styles.infoText, { color: '#1e88e5', textDecorationLine: 'underline' }]}>
+                            {user.phoneNumber}
+                        </TextMedium>
+                    </TouchableOpacity>
+                )}
             </View>
-
-            <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
-                <TextMedium style={styles.logoutText}>Logout</TextMedium>
-            </TouchableOpacity>
+            {showLogoutButton &&
+                <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
+                    <TextMedium style={styles.logoutText}>Sign out</TextMedium>
+                </TouchableOpacity>
+            }
         </View>
     );
 };
@@ -111,7 +93,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 32,
     },
     center: {
         flex: 1,
@@ -135,6 +116,7 @@ const styles = StyleSheet.create({
     },
     infoText: {
         fontSize: 16,
+        color: "#443627",
     },
     logoutButton: {
         backgroundColor: '#d98324',

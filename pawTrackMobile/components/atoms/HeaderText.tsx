@@ -1,6 +1,7 @@
 import { FontAwesome } from "@expo/vector-icons";
-import { View, getTheme } from '@/components/Themed';
+import { getTheme } from '@/components/Themed';
 import { TextMedium } from "../StyledText";
+import { View } from "react-native";
 
 type HeaderTextProps = {
     text: string;
