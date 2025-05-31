@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {View, StyleSheet, TouchableOpacity, ScrollView, Text, Image, Modal, ActivityIndicator} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView, Text, Image, Modal, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import CustomCalendar from '@/components/atoms/CustomCalendar';
 import { getPetsForUser, Pet } from '@/src/Pets';
-import { Task } from '@/src/Task';
+import { setTaskOnCompleted, Task } from '@/src/Task';
 import { getTasksForPets } from '@/src/Task';
 import { getTheme } from '@/components/Themed';
 import { TextMedium, TextRegular, TextSemiBold } from '@/components/StyledText';
 import { Dimensions } from 'react-native';
 import { formatTaskDate, formatTaskTime } from '@/util/HelperFunctions';
+import Toast from 'react-native-toast-message';
 
 const HomeScreen = () => {
   const theme = getTheme();
@@ -50,10 +51,10 @@ const HomeScreen = () => {
 
   if (loading) {
     return (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color={theme.orange} />
-          <Text>Loading tasks...</Text>
-        </View>
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={theme.orange} />
+        <Text>Loading tasks...</Text>
+      </View>
     );
   }
 
@@ -73,6 +74,14 @@ const HomeScreen = () => {
       return "Today";
     }
     return selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  };
+
+  const handleCompleted = async (selectedTask) => {
+    await setTaskOnCompleted(selectedTask.id, true);
+    setTaskModalVisible(false);
+    Toast.show({ type: 'success', text1: 'Task completed!' });
+    setLoading(true);
+    await getTasks();
   };
 
   return (
@@ -107,29 +116,34 @@ const HomeScreen = () => {
           const pet = pets.find(p => p.id === task.petId);
           return (
             <TouchableOpacity key={task.id} onPress={() => handleTaskPress(task)}>
-              <View style={styles.taskCard}>
+              <View style={[styles.taskCard, task.completed && styles.completedTaskCard]}>
                 <View style={{ flex: 1 }}>
                   <TextSemiBold style={styles.taskTitle}>{task.taskTitle}</TextSemiBold>
                   <TextRegular style={styles.taskTime}>{formatTaskTime(task)}</TextRegular>
                 </View>
                 {pet?.picture && (
-                    <View style={{ position: 'relative', width: 70, height: 70 }}>
-                      {imageLoadingStates[task.id] && (
-                          <View style={styles.imageLoader}>
-                            <ActivityIndicator size="small" color={theme.orange} />
-                          </View>
-                      )}
-                      <Image
-                          source={{ uri: pet.picture }}
-                          style={styles.petImage}
-                          onLoadStart={() =>
-                              setImageLoadingStates(prev => ({ ...prev, [task.id]: true }))
-                          }
-                          onLoadEnd={() =>
-                              setImageLoadingStates(prev => ({ ...prev, [task.id]: false }))
-                          }
-                      />
-                    </View>
+                  <View style={{ position: 'relative', width: 70, height: 70 }}>
+                    {imageLoadingStates[task.id] && (
+                      <View style={styles.imageLoader}>
+                        <ActivityIndicator size="small" color={theme.orange} />
+                      </View>
+                    )}
+                    <Image
+                      source={{ uri: pet.picture }}
+                      style={styles.petImage}
+                      onLoadStart={() =>
+                        setImageLoadingStates(prev => ({ ...prev, [task.id]: true }))
+                      }
+                      onLoadEnd={() =>
+                        setImageLoadingStates(prev => ({ ...prev, [task.id]: false }))
+                      }
+                    />
+                    {task.completed && (
+                      <View style={styles.checkmarkContainer}>
+                        <Feather name="check" size={28} color="#4BB543" />
+                      </View>
+                    )}
+                  </View>
                 )}
 
               </View>
@@ -150,41 +164,44 @@ const HomeScreen = () => {
           >
             <View style={[styles.taskModal, { width: screenWidth * 0.8 }]}>
               {selectedTask && (
-                  <>
-                    <View style={styles.modalHeader}>
-                      {(() => {
-                        const petPicture = pets.find(p => p.id === selectedTask.petId)?.picture;
+                <>
+                  <View style={styles.modalHeader}>
+                    {(() => {
+                      const petPicture = pets.find(p => p.id === selectedTask.petId)?.picture;
 
-                        return petPicture ? (
-                            <View style={{ position: 'relative', width: 80, height: 80 }}>
-                              {isModalImageLoading && (
-                                  <View style={styles.modalImageLoader}>
-                                    <ActivityIndicator size="small" color={theme.orange} />
-                                  </View>
-                              )}
-                              <Image
-                                  source={{ uri: petPicture }}
-                                  style={styles.modalPetImage}
-                                  onLoadStart={() => setIsModalImageLoading(true)}
-                                  onLoadEnd={() => setIsModalImageLoading(false)}
-                              />
+                      return petPicture ? (
+                        <View style={{ position: 'relative', width: 80, height: 80 }}>
+                          {isModalImageLoading && (
+                            <View style={styles.modalImageLoader}>
+                              <ActivityIndicator size="small" color={theme.orange} />
                             </View>
-                        ) : null;
-                      })()}
-                      <TextSemiBold style={styles.modalTaskTitle}>{selectedTask.taskTitle}</TextSemiBold>
-                    </View>
+                          )}
+                          <Image
+                            source={{ uri: petPicture }}
+                            style={styles.modalPetImage}
+                            onLoadStart={() => setIsModalImageLoading(true)}
+                            onLoadEnd={() => setIsModalImageLoading(false)}
+                          />
+                        </View>
+                      ) : null;
+                    })()}
+                    <TextSemiBold style={styles.modalTaskTitle}>{selectedTask.taskTitle}</TextSemiBold>
+                  </View>
 
-                    <View style={styles.modalContent}>
-                      <TextSemiBold style={styles.modalLabel}>Date:</TextSemiBold>
-                      <TextRegular style={styles.modalValue}>{formatTaskDate(selectedTask)}</TextRegular>
+                  <View style={styles.modalContent}>
+                    <TextSemiBold style={styles.modalLabel}>Date:</TextSemiBold>
+                    <TextRegular style={styles.modalValue}>{formatTaskDate(selectedTask)}</TextRegular>
 
-                      <TextSemiBold style={styles.modalLabel}>Hours:</TextSemiBold>
-                      <TextRegular style={styles.modalValue}>{formatTaskTime(selectedTask)}</TextRegular>
+                    <TextSemiBold style={styles.modalLabel}>Hours:</TextSemiBold>
+                    <TextRegular style={styles.modalValue}>{formatTaskTime(selectedTask)}</TextRegular>
 
-                      <TextSemiBold style={styles.modalLabel}>Details:</TextSemiBold>
-                      <TextRegular style={styles.modalValue}>{selectedTask.details}</TextRegular>
-                    </View>
-                  </>
+                    <TextSemiBold style={styles.modalLabel}>Details:</TextSemiBold>
+                    <TextRegular style={styles.modalValue}>{selectedTask.details}</TextRegular>
+                  </View>
+                  <TouchableOpacity style={styles.button} onPress={() => handleCompleted(selectedTask)}>
+                    <TextMedium style={styles.buttonText}>Complete task</TextMedium>
+                  </TouchableOpacity>
+                </>
               )}
             </View>
           </TouchableOpacity>
@@ -273,6 +290,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 2 },
   },
+  completedTaskCard: {
+    backgroundColor: '#fff7d6',
+    borderColor: '#4BB543',
+    opacity: 0.85,
+  },
   taskTitle: {
     fontSize: 18,
     color: '#443627',
@@ -310,11 +332,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
+    width: '100%',
+    flexDirection: 'column',
   },
   modalPetImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
+    alignSelf: 'center',
   },
   modalTaskTitle: {
     fontSize: 24,
@@ -334,6 +359,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#443627',
     marginBottom: 12,
+  },
+  button: {
+    backgroundColor: "#d98324",
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonText: {
+    color: "#f2f6d0",
+  },
+  checkmarkContainer: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 2,
+    zIndex: 2,
+    elevation: 3,
   },
 });
 

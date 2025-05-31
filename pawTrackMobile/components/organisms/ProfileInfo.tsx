@@ -3,45 +3,18 @@ import { TextMedium } from '@/components/StyledText';
 import { useSession } from '@/context/AuthContext';
 import {getTheme, Text} from '@/components/Themed';
 import { FontAwesome5, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import Toast from 'react-native-toast-message';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getUserProfile } from '@/src/User';
-import {countPetsForUser} from "@/src/Pets";
+import React, { useState } from 'react';
 
-const ProfileInfo = () => {
+type ProfileInfoProps = {
+    user: any;
+    loading: boolean;
+    petsCount: number;
+}
+
+const ProfileInfo = ({user, loading, petsCount} : ProfileInfoProps) => {
     const theme = getTheme();
     const { signOut } = useSession();
-    const [user, setUser] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
     const [imageLoading, setImageLoading] = useState(true);
-    const [petsCount, setPetsCount] = useState<number | null>(null);
-
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const id = await AsyncStorage.getItem('userId');
-                if (!id) throw new Error('User ID not found in storage');
-
-                const profile = await getUserProfile(id);
-                if (!profile) throw new Error('User profile not found');
-
-                setUser(profile);
-
-                const petsCount = await countPetsForUser(id);
-                if (!petsCount) throw new Error('Pets count not found');
-
-                setPetsCount(petsCount);
-            } catch (e) {
-                Toast.show({ type: 'error', text1: 'Failed to load profile' });
-                console.error(e);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        void fetchUserProfile();
-    }, []);
 
     if (loading) {
         return (
@@ -51,7 +24,6 @@ const ProfileInfo = () => {
             </View>
         );
     }
-
     return (
         <View style={styles.container}>
             {user?.picture && (

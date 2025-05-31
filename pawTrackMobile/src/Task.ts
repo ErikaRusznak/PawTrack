@@ -57,3 +57,8 @@ export const getTasksByPetId = async (petId: string) => {
     }
 };
 
+export const setTaskOnCompleted = async (taskId: string, completed: boolean) => {
+  const taskRef = doc(db, TABLE_NAME, taskId);
+  await updateDoc(taskRef, { completed });
+};
+

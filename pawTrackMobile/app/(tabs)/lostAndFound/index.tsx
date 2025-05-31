@@ -9,6 +9,7 @@ import CountiesDropdownModal from '@/components/atoms/CountiesDropdownModal';
 import { router } from 'expo-router';
 import LostAndFoundPostCard from '@/components/organisms/LostAndFoundPostCard';
 import { Post, getPosts } from '@/src/LostAndFoundPost';
+import { useFocusEffect } from '@react-navigation/native';
 
 const LostAndFoundScreen = () => {
 
@@ -42,15 +43,15 @@ const LostAndFoundScreen = () => {
     setInitialData();
   }, [])
 
-  useEffect(() => {
-    if (countySelected) fetchPosts();
-  }, [countySelected])
+  useFocusEffect(
+    React.useCallback(() => {
+      if (countySelected) fetchPosts();
+    }, [countySelected])
+  );
 
   const addPost = () => {
     router.replace("/(tabs)/lostAndFound/add" as any);
   };
-
-
 
   return (
     <View style={styles.main}>
