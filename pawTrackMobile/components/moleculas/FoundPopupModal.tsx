@@ -41,9 +41,9 @@ const FoundPopupModal = ({ visible, onClose, foundPetForUserId }: FoundPopupModa
         await uploadBytes(fileRef, blob);
         pictureUrl = await getDownloadURL(fileRef);
       }
-      // Get or create chat and chatKey
+
       const { chatId, chatKey } = await getOrCreateChat(senderId, foundPetForUserId, details);
-      // Add message
+
       await addMessage({
         chatKey,
         sentByUser: senderId, 
@@ -51,7 +51,7 @@ const FoundPopupModal = ({ visible, onClose, foundPetForUserId }: FoundPopupModa
         sentAt: new Date(),
         picture: pictureUrl,
       });
-      // Update chat last message
+
       await updateChatLastMessage(chatId, details);
       onClose();
       Toast.show({ type: 'success', text1: 'Message sent!' });

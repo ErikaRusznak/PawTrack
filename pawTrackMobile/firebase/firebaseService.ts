@@ -60,6 +60,7 @@ export const register = async(
   county: string,
   email: string, 
   password: string, 
+  phoneNumber: string,
   picture?: string
   ): Promise<FirebaseUserResponse | undefined> => {
     try {
@@ -68,7 +69,7 @@ export const register = async(
         await updateProfile(userCredential.user, { photoURL: picture });
       }
 
-      addUserProfile(userCredential.user.uid, firstName, lastName, age, county, email, picture);
+      addUserProfile(userCredential.user.uid, firstName, lastName, age, county, email, phoneNumber, picture);
   
       return { user: userCredential.user };
       

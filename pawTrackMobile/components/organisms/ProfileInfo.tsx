@@ -1,7 +1,7 @@
-import {View, Image, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
 import { TextMedium } from '@/components/StyledText';
 import { useSession } from '@/context/AuthContext';
-import {getTheme, Text} from '@/components/Themed';
+import { getTheme, Text } from '@/components/Themed';
 import { FontAwesome5, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import React, { useState } from 'react';
 
@@ -9,13 +9,15 @@ type ProfileInfoProps = {
     user: any;
     loading: boolean;
     petsCount: number;
+    showLogoutButton?: boolean;
 }
 
-const ProfileInfo = ({user, loading, petsCount} : ProfileInfoProps) => {
+const ProfileInfo = ({ user, loading, petsCount, showLogoutButton = true }: ProfileInfoProps) => {
     const theme = getTheme();
     const { signOut } = useSession();
     const [imageLoading, setImageLoading] = useState(true);
 
+console.log("user", user);
     if (loading) {
         return (
             <View style={styles.center}>
@@ -25,7 +27,7 @@ const ProfileInfo = ({user, loading, petsCount} : ProfileInfoProps) => {
         );
     }
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, showLogoutButton ? {gap: 32} : {gap: 0}]}>
             {user?.picture && (
                 <View style={{ position: 'relative' }}>
                     {imageLoading && (
@@ -43,37 +45,45 @@ const ProfileInfo = ({user, loading, petsCount} : ProfileInfoProps) => {
                 </View>
             )}
 
-
             <View style={styles.infoBlock}>
                 <View style={styles.infoRow}>
-                    <FontAwesome5 name="user" size={18} color="black" />
+                    <FontAwesome5 name="user" size={18} color="#443627" />
                     <TextMedium style={styles.infoText}>
                         {user?.firstName} {user?.lastName}
                     </TextMedium>
                 </View>
                 <View style={styles.infoRow}>
-                    <MaterialCommunityIcons name="calendar" size={20} color="black" />
+                    <MaterialCommunityIcons name="calendar" size={20} color="#443627" />
                     <TextMedium style={styles.infoText}>
                         {user?.age} years old
                     </TextMedium>
                 </View>
                 <View style={styles.infoRow}>
-                    <Entypo name="location-pin" size={20} color="black" />
+                    <Entypo name="location-pin" size={20} color="#443627" />
                     <TextMedium style={styles.infoText}>
                         {user?.county}
                     </TextMedium>
                 </View>
                 <View style={styles.infoRow}>
-                    <FontAwesome5 name="paw" size={18} color="black" />
+                    <FontAwesome5 name="paw" size={18} color="#443627" />
                     <TextMedium style={styles.infoText}>
                         {petsCount} animals
                     </TextMedium>
                 </View>
+                {user?.phoneNumber && (
+                    <TouchableOpacity style={styles.infoRow} onPress={() => Linking.openURL(`tel:${user.phoneNumber}`)}>
+                        <MaterialCommunityIcons name="phone" size={20} color="#1e88e5" />
+                        <TextMedium style={[styles.infoText, { color: '#1e88e5', textDecorationLine: 'underline' }]}>
+                            {user.phoneNumber}
+                        </TextMedium>
+                    </TouchableOpacity>
+                )}
             </View>
-
-            <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
-                <TextMedium style={styles.logoutText}>Logout</TextMedium>
-            </TouchableOpacity>
+            {showLogoutButton &&
+                <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
+                    <TextMedium style={styles.logoutText}>Sign out</TextMedium>
+                </TouchableOpacity>
+            }
         </View>
     );
 };
@@ -83,7 +93,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 32,
     },
     center: {
         flex: 1,
@@ -107,6 +116,7 @@ const styles = StyleSheet.create({
     },
     infoText: {
         fontSize: 16,
+        color: "#443627",
     },
     logoutButton: {
         backgroundColor: '#d98324',
