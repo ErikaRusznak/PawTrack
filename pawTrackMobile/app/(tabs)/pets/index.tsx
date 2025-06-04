@@ -7,6 +7,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { deletePet, getPetsForUser, Pet, updatePetFoundStatus } from '@/src/Pets';
 import PetActionsPopup from '@/components/moleculas/pets/PetActionsPopup';
 import { useFocusEffect } from '@react-navigation/native';
+import {markLatestPostByPetIdAsFound} from "@/src/LostAndFoundPost";
 
 const PetsScreen = () => {
   const router = useRouter();
@@ -47,6 +48,7 @@ const PetsScreen = () => {
   const handleMarkAsFound = async (petId: string) => {
     if (!userId) return;
     await updatePetFoundStatus(petId, true);
+    await markLatestPostByPetIdAsFound(petId);
     const petsForUser = await getPetsForUser(userId);
     setPets(petsForUser);
   };

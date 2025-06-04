@@ -62,6 +62,32 @@ export const getPosts = async (county?: string): Promise<Post[]> => {
     }
 };
 
+export const markLatestPostByPetIdAsFound = async (petId: string) => {
+    try {
+        const postRef = collection(db, TABLE_NAME);
+        const postQuery = query(
+            postRef,
+            where('petId', '==', petId),
+            orderBy('createdAt', 'desc'),
+            limit(1)
+        );
+        const querySnapshot = await getDocs(postQuery);
+        if (querySnapshot.empty) {
+            console.log("No post found for this pet.");
+            return;
+        }
+
+        const latestDoc = querySnapshot.docs[0];
+        const docRef = doc(db, TABLE_NAME, latestDoc.id);
+        await updateDoc(docRef, {
+            found: true
+        });
+    }catch (error) {
+        console.error("Error fetching post:", error);
+        return [];
+    }
+};
+
 export const updatePost = async (id: string, data: Partial<Post>) => {
     await updateDoc(doc(db, TABLE_NAME, id), data);
 };
