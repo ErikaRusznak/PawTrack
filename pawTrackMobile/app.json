@@ -37,7 +37,9 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/Montserrat-Regular.ttf"]
+          "fonts": [
+            "./assets/fonts/Montserrat-Regular.ttf"
+          ]
         }
       ],
       [
@@ -49,6 +51,9 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "projectId": "0dc10051-9c60-4cf7-a65a-2dbc8777df0d"
     }
   }
 }

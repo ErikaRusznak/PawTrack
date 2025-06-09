@@ -17,7 +17,6 @@ const ProfileInfo = ({ user, loading, petsCount, showLogoutButton = true }: Prof
     const { signOut } = useSession();
     const [imageLoading, setImageLoading] = useState(true);
 
-console.log("user", user);
     if (loading) {
         return (
             <View style={styles.center}>

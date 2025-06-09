@@ -1,106 +1,114 @@
-import { 
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    signOut,
-    updateProfile,
-    User,
-    UserCredential
-  } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  User,
+  UserCredential
+} from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import { addUserProfile } from '@/src/User';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
+import Constants from 'expo-constants';
 
 export interface FirebaseUserResponse {
-    user: User;
+  user: User;
 }
- 
+
 export async function registerForPushNotificationsAsync(userId: string) {
   let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    // Save token to Firestore
-    await updateDoc(doc(db, 'users', userId), { expoPushToken: token });
+  // if (Device.isDevice) {
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
   }
+
+  if (finalStatus !== 'granted') {
+    alert('Failed to get push token for push notification!');
+    return;
+  }
+// console.log("token", Constants.expoConfig?.extra?.eas.projectId)
+  // Get projectId from app.json extra field
+  const projectId = Constants.manifest?.extra?.projectId;
+  token = await Notifications.getExpoPushTokenAsync({
+    projectId,
+  });
+
+  console.log("gggg")
+  await updateDoc(doc(db, 'users', userId), { expoPushToken: '2232' });
+  // }
   return token;
 }
- 
+
 export const getCurrentUser = async () => {
-    try {
-      return new Promise((resolve) => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-          unsubscribe();
-          resolve(user ? { user } : null);
-        });
+  try {
+    return new Promise((resolve) => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        unsubscribe();
+        resolve(user ? { user } : null);
       });
-    } catch (error) {
-      console.error("[error getting user] ==>", error);
-      return null;
-    }
+    });
+  } catch (error) {
+    console.error("[error getting user] ==>", error);
+    return null;
+  }
 };
-  
+
 export const login = async (
-    email: string, 
-    password: string
-  ): Promise<FirebaseUserResponse | undefined> => {
-    try {
-      const userCredential: UserCredential = await signInWithEmailAndPassword(
-        auth, 
-        email, 
-        password
-      );
-      return { user: userCredential.user };
-    } catch (e) {
-      console.error("[error logging in] ==>", e);
-      throw e;
-    }
+  email: string,
+  password: string
+): Promise<FirebaseUserResponse | undefined> => {
+  try {
+    const userCredential: UserCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    return { user: userCredential.user };
+  } catch (e) {
+    console.error("[error logging in] ==>", e);
+    throw e;
+  }
 }
-  
-export const logout = async(): Promise<void> => {
-    try {
-      await signOut(auth);
-    } catch (e) {
-      console.error("[error logging out] ==>", e);
-      throw e;
-    }
+
+export const logout = async (): Promise<void> => {
+  try {
+    await signOut(auth);
+  } catch (e) {
+    console.error("[error logging out] ==>", e);
+    throw e;
+  }
 }
-  
-export const register = async(
+
+export const register = async (
   firstName: string,
   lastName: string,
   age: number,
   county: string,
-  email: string, 
-  password: string, 
+  email: string,
+  password: string,
   phoneNumber: string,
   picture?: string
-  ): Promise<FirebaseUserResponse | undefined> => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      if (picture) {
-        await updateProfile(userCredential.user, { photoURL: picture });
-      }
-
-      addUserProfile(userCredential.user.uid, firstName, lastName, age, county, email, phoneNumber, picture);
-  
-      return { user: userCredential.user };
-      
-    } catch (e) {
-      console.error("[error registering] ==>", e);
-      throw e;
+): Promise<FirebaseUserResponse | undefined> => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    if (picture) {
+      await updateProfile(userCredential.user, { photoURL: picture });
     }
+
+    addUserProfile(userCredential.user.uid, firstName, lastName, age, county, email, phoneNumber, picture);
+
+    return { user: userCredential.user };
+
+  } catch (e) {
+    console.error("[error registering] ==>", e);
+    throw e;
+  }
 }
 
 export async function sendBeautifulFoundNotification(expoPushToken: string, senderName: string, message: string) {
