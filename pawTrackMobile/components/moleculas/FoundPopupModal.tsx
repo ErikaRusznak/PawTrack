@@ -6,12 +6,13 @@ import { getTheme } from '@/components/Themed';
 import { FontAwesome } from '@expo/vector-icons';
 import { getOrCreateChat, updateChatLastMessage } from '@/src/Chat';
 import { addMessage } from '@/src/Message';
-import { db } from '@/firebase/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { storage } from '@/firebase/firebaseConfig';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import uuid from 'react-native-uuid';
 import Toast from 'react-native-toast-message';
+import { getExpoPushTokenForUser, sendBeautifulFoundNotification } from '@/firebase/firebaseService';
+import { getUserProfile } from '@/src/User';
 
 type FoundPopupModalProps = {
   visible: boolean;
@@ -53,6 +54,18 @@ const FoundPopupModal = ({ visible, onClose, foundPetForUserId }: FoundPopupModa
       });
 
       await updateChatLastMessage(chatId, details);
+
+      // --- Push Notification Logic ---
+      const expoPushToken = await getExpoPushTokenForUser(foundPetForUserId);
+      if (expoPushToken) {
+        await sendBeautifulFoundNotification(
+          expoPushToken,
+          details,
+          ''
+        );
+      }
+      // ------------------------------
+
       onClose();
       Toast.show({ type: 'success', text1: 'Message sent!' });
       setResetKey((k) => k + 1);

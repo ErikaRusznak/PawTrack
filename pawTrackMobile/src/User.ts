@@ -11,6 +11,7 @@ export type UserData = {
     email: string;
     picture?: string | null;
     phoneNumber: string;
+    expoPushToken?: string;
 }
 
 export const addUserProfile = async (uid: string, firstName: string, lastName: string, age: number, county: string, email: string, phoneNumber: string, picture?: string) => {

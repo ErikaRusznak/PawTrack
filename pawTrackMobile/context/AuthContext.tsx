@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/firebaseConfig";
-import { login, logout, register } from "@/firebase/firebaseService";
+import { login, logout, register, registerForPushNotificationsAsync } from "@/firebase/firebaseService";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthContextType {
@@ -46,6 +46,7 @@ export const SessionProvider = (props: { children: React.ReactNode }) => {
       const response = await login(email, password);
       if (response?.user?.uid) {
         await AsyncStorage.setItem('userId', response.user.uid);
+        await registerForPushNotificationsAsync(response.user.uid); // push token after login
       }
       return response?.user;
     } catch (error) {
@@ -53,7 +54,6 @@ export const SessionProvider = (props: { children: React.ReactNode }) => {
       return undefined;
     }
   };
-
   const handleSignUp = async (
     firstName: string, 
     lastName: string,
